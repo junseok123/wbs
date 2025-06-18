@@ -2,93 +2,183 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>WBS 입력 모달 예제</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 40px; background: #f8f8f8; }
-        table { width: 100%; border-collapse: collapse; margin-top: 30px; background-color: white; }
-        th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
-        th { background-color: #d4e4ff; }
-        input, select, textarea { width: 100%; padding: 4px; font-size: 13px; }
-        .btn { padding: 5px 10px; margin: 2px; cursor: pointer; }
-    </style>
+  <meta charset="UTF-8" />
+  <title>WBS 입력 with Sidebar</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="style.css" rel="stylesheet" />
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+      background-color: white;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #d4e4ff;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 4px;
+      font-size: 13px;
+    }
+    .btn-bd-primary {
+      --bs-btn-font-weight: 600;
+      --bs-btn-color: white;
+      --bs-btn-bg: #304070;
+      --bs-btn-border-color: #304070;
+      --bs-btn-hover-color: white;
+      --bs-btn-hover-bg: #8ec0e4;
+      --bs-btn-hover-border-color: #8ec0e4;
+    }
+    .btn-current {
+      --bs-btn-font-weight: 600;
+      --bs-btn-color: white;
+      --bs-btn-bg: #8ec0e4;
+      --bs-btn-border-color: #8ec0e4;
+    }
+  </style>
 </head>
 <body>
-    <h3>📋 기존 WBS 항목</h3>
-    <button onclick="openModal()" class="btn">+ 새 항목 추가</button>
+  <div class="row container-fluid p-0 m-0" style="min-height: 100vh;">
+            <!-- 사이드바 -->
+            <div class="col-md-1 border-end text-center">
 
-    <!-- 모달 입력창 -->
-    <div id="inputModal" style="display:none; position:fixed; inset:0; background-color:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center; display:flex;">
-        <div style="background:white; width:600px; padding:20px; border-radius:8px; position:relative;">
-            <h3>📝 새 WBS 항목 추가</h3>
-            <table style="width:100%">
-                <tr><td>TASK TITLE</td><td><input type="text" id="new_task_title"></td></tr>
-                <tr><td>TASK OWNER</td><td><input type="text" id="new_task_owner"></td></tr>
-                <tr><td>Device</td><td><input type="text" id="new_device"></td></tr>
-                <tr><td>START DATE</td><td><input type="date" id="new_start_date"></td></tr>
-                <tr><td>DUE DATE</td><td><input type="date" id="new_due_date"></td></tr>
-                <tr><td>Tester</td><td><input type="text" id="new_tester"></td></tr>
-                <tr><td>DURATION</td><td><input type="number" id="new_duration" min="0"></td></tr>
-                <tr><td>PROGRESS</td><td>
-                    <select id="new_progress">
-                        <option>Wait</option>
-                        <option>In progress</option>
-                        <option>COMPLETE</option>
-                        <option>Hold</option>
-                    </select>
-                </td></tr>
-                <tr><td>Comment</td><td><textarea id="new_comment"></textarea></td></tr>
-            </table>
-            <div style="text-align:right; margin-top:20px;">
-                <button class="btn" onclick="addRow()">추가</button>
-                <button class="btn" onclick="closeModal()">닫기</button>
+                <!-- 아이콘 -->
+                <div>
+                    <ul class="nav flex-column">
+                        <!-- 홈 -->
+                        <li class="nav-item m-2">
+                            <a class="nav-link active mt-4" aria-current="page" href="/">
+                                <button type="button" class="btn btn-current rounded-circle" style="width: 50px; height: 50px;" onclick ="location.href='/home'">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                                        <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"/>
+                                    </svg>
+                                </button>
+                            </a>
+                        </li>
+                        <!-- 공지사항 -->
+                        <li class="nav-item m-2">
+                            <a class="nav-link mt-4" href="#">
+                                <button type="button" class="btn btn-bd-primary rounded-circle" style="width: 50px; height: 50px;" onclick ="location.href='/board'">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-megaphone" viewBox="0 0 16 16">
+                                        <path d="M13 2.5a1.5 1.5 0 0 1 3 0v11a1.5 1.5 0 0 1-3 0v-.214c-2.162-1.241-4.49-1.843-6.912-2.083l.405 2.712A1 1 0 0 1 5.51 15.1h-.548a1 1 0 0 1-.916-.599l-1.85-3.49a68.14 68.14 0 0 0-.202-.003A2.014 2.014 0 0 1 0 9V7a2.02 2.02 0 0 1 1.992-2.013 74.663 74.663 0 0 0 2.483-.075c3.043-.154 6.148-.849 8.525-2.199V2.5zm1 0v11a.5.5 0 0 0 1 0v-11a.5.5 0 0 0-1 0zm-1 1.35c-2.344 1.205-5.209 1.842-8 2.033v4.233c.18.01.359.022.537.036 2.568.189 5.093.744 7.463 1.993V3.85zm-9 6.215v-4.13a95.09 95.09 0 0 1-1.992.052A1.02 1.02 0 0 0 1 7v2c0 .55.448 1.002 1.006 1.009A60.49 60.49 0 0 1 4 10.065zm-.657.975 1.609 3.037.01.024h.548l-.002-.014-.443-2.966a68.019 68.019 0 0 0-1.722-.082z"/>
+                                    </svg>
+                                </button>
+                            </a>
+                        </li>
+                        <!-- TM 확인 -->
+                        <li class="nav-item m-2">
+                            <a class="nav-link mt-4" href="#">
+                                <button type="button" class="btn btn-bd-primary rounded-circle" style="width: 50px; height: 50px;" onclick ="location.href='/voc'">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-telephone" viewBox="0 0 16 16">
+                                        <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/>
+                                    </svg>
+                                </button>
+                            </a>
+                        </li>
+                        <!-- 시외공사 -->
+                        <li class="nav-item m-2">
+                            <a class="nav-link mt-4" href="#">
+                                <button type="button" class="btn btn-bd-primary rounded-circle" style="width: 50px; height: 50px;" onclick ="location.href='/construction'">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                                        <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                                      </svg>
+                                </button>
+                            </a>   
+                        </li>
+                      </ul>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <table>
+    <!-- 메인 콘텐츠 -->
+    <div class="col p-4">
+      <h3>📋 WBS 항목 관리</h3>
+      <button onclick="openModal()" class="btn btn-primary mb-3">+ 새 항목 추가</button>
+
+      <!-- 모달 -->
+      <div id="inputModal" style="display:none; position:fixed; inset:0; background-color:rgba(0,0,0,0.5); z-index:1050; display:flex; align-items:center; justify-content:center;">
+        <div style="background:white; width:600px; padding:20px; border-radius:8px;">
+          <h4>새 항목 추가</h4>
+          <table>
+            <tr><td>TASK TITLE</td><td><input type="text" id="new_task_title"></td></tr>
+            <tr><td>TASK OWNER</td><td><input type="text" id="new_task_owner"></td></tr>
+            <tr><td>Device</td><td><input type="text" id="new_device"></td></tr>
+            <tr><td>START DATE</td><td><input type="date" id="new_start_date"></td></tr>
+            <tr><td>DUE DATE</td><td><input type="date" id="new_due_date"></td></tr>
+            <tr><td>Tester</td><td><input type="text" id="new_tester"></td></tr>
+            <tr><td>DURATION</td><td><input type="number" id="new_duration" min="0"></td></tr>
+            <tr><td>PROGRESS</td>
+              <td><select id="new_progress">
+                <option>Wait</option>
+                <option>In progress</option>
+                <option>COMPLETE</option>
+                <option>Hold</option>
+              </select></td></tr>
+            <tr><td>Comment</td><td><textarea id="new_comment"></textarea></td></tr>
+          </table>
+          <div class="text-end mt-3">
+            <button class="btn btn-success" onclick="addRow()">추가</button>
+            <button class="btn btn-secondary" onclick="closeModal()">닫기</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 테이블 -->
+      <table>
         <thead>
-            <tr>
-                <th>No.</th><th>TASK TITLE</th><th>TASK OWNER</th><th>Device</th>
-                <th>START DATE</th><th>DUE DATE</th><th>Tester</th><th>DURATION</th><th>PROGRESS</th><th>Comment</th><th>Action</th>
-            </tr>
+          <tr>
+            <th>No.</th><th>TASK TITLE</th><th>TASK OWNER</th><th>Device</th><th>START DATE</th>
+            <th>DUE DATE</th><th>Tester</th><th>DURATION</th><th>PROGRESS</th><th>Comment</th><th>Action</th>
+          </tr>
         </thead>
         <tbody id="wbsTableBody">
-            <tr id="row1">
-                <td>1</td><td>Flip7 GFP Compile Log 확보 요청</td><td>곽한호</td><td>Solomon - 32</td>
-                <td>2025-06-17</td><td>2025-06-19</td><td>이수연</td><td>2</td><td>In progress</td><td>-</td>
-                <td><button class="btn" onclick="editRow(1)">수정</button></td>
-            </tr>
+          <tr id="row1">
+            <td>1</td><td>Flip7 GFP Compile Log 확보 요청</td><td>곽한호</td><td>Solomon - 32</td>
+            <td>2025-06-17</td><td>2025-06-19</td><td>이수연</td><td>2</td><td>In progress</td><td>-</td>
+            <td><button class="btn btn-outline-primary btn-sm" onclick="editRow(1)">수정</button></td>
+          </tr>
         </tbody>
-    </table>
+      </table>
+    </div>
+  </div>
 
-    <script>
-        let currentRowCount = 1;
-        function openModal() {
-            document.getElementById('inputModal').style.display = 'flex';
-        }
-        function closeModal() {
-            document.getElementById('inputModal').style.display = 'none';
-        }
-        function addRow() {
-            currentRowCount++;
-            const tbody = document.getElementById('wbsTableBody');
-            const row = document.createElement('tr');
-            row.id = `row${currentRowCount}`;
-            const values = ['new_task_title','new_task_owner','new_device','new_start_date','new_due_date','new_tester','new_duration','new_progress','new_comment']
-                .map(id => document.getElementById(id).value);
-            row.innerHTML = `
-                <td>${currentRowCount}</td>
-                ${values.slice(0,8).map(val => `<td>${val}</td>`).join('')}
-                <td>${values[8]}</td>
-                <td><button class="btn" onclick="editRow(${currentRowCount})">수정</button></td>
-            `;
-            tbody.appendChild(row);
-            closeModal();
-        }
-        function editRow(id) {
-            alert("수정 기능은 향후에 제공됩니다.");
-        }
-    </script>
+<script>
+  let currentRowCount = 1;
+
+  function openModal() {
+    document.getElementById('inputModal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('inputModal').style.display = 'none';
+  }
+
+  function addRow() {
+    currentRowCount++;
+    const tbody = document.getElementById('wbsTableBody');
+    const row = document.createElement('tr');
+    row.id = `row${currentRowCount}`;
+    const values = ['new_task_title','new_task_owner','new_device','new_start_date','new_due_date','new_tester','new_duration','new_progress','new_comment']
+      .map(id => document.getElementById(id).value);
+    row.innerHTML = `
+      <td>${currentRowCount}</td>
+      ${values.map(val => `<td>${val}</td>`).join('')}
+      <td><button class="btn btn-outline-primary btn-sm" onclick="editRow(${currentRowCount})">수정</button></td>
+    `;
+    tbody.appendChild(row);
+    closeModal();
+  }
+
+  function editRow(id) {
+    alert("수정 기능은 추후 지원됩니다.");
+  }
+</script>
 </body>
 </html>
