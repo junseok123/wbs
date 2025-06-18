@@ -1,0 +1,134 @@
+i {
+    font-size: 28px;
+}
+
+
+hr {
+    color: #AABBD0;
+}
+
+.btn-bd-primary {
+    --bs-btn-font-weight: 600;
+    --bs-btn-color: white;
+    --bs-btn-bg: #304070;
+    --bs-btn-border-color: #304070;
+    --bs-btn-hover-color: var(--bs-white);
+    --bs-btn-hover-bg: #8EC0E4;
+    --bs-btn-hover-border-color: #8EC0E4;
+    --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+    --bs-btn-active-color: var(--bs-btn-hover-color);
+    --bs-btn-active-bg: #8EC0E4;
+    --bs-btn-active-border-color: #8EC0E4;
+  }
+
+.btn-current {
+    --bs-btn-font-weight: 600;
+    --bs-btn-color: #ffffff;
+    --bs-btn-bg:  #8EC0E4;
+    --bs-btn-border-color:  #8EC0E4;
+    --bs-btn-hover-color: var(--bs-white);
+    --bs-btn-hover-bg: #8EC0E4;
+    --bs-btn-hover-border-color: #8EC0E4;
+    --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+    --bs-btn-active-color: var(--bs-btn-hover-color);
+    --bs-btn-active-bg: #8EC0E4;
+    --bs-btn-active-border-color: #8EC0E4;
+}
+.content {
+    display: flex;
+    flex-direction: column;
+}
+.wrap {
+    display: flex;
+}
+
+.board{
+    border: 1px solid #DEE2E6;
+    border-radius: 5px;
+    width: 40vw;
+    height: 30vh;
+    margin-left: 3.5vw;
+    margin-top: 5vh;
+    margin-right: 1.5vw;
+    background-color: white;
+    transition: all 0.4s;
+}
+.board:hover{
+    width: 41vw;
+    height: 31vh;
+    margin-right: 0.5vw;   
+}
+.construction{
+    border: 1px solid #DEE2E6;
+    border-radius: 5px;
+    width: 40vw;
+    height: 30vh;
+    margin-right: 2.5vw;
+    margin-top: 5vh;
+    margin-left: 1.5vw;
+    background-color: white;
+    transition: all 0.4s;
+}
+.construction:hover{
+    width: 41vw;
+    height: 31vh;
+    
+}
+.text{
+    margin:10px;
+    margin-bottom: -8px;
+    font-size: 22px;
+    font-weight: 600;
+}
+table{
+    width: 100%;
+    
+}
+tr, td{
+    padding: 10px;  
+}
+
+
+
+.tm_check{
+    background-color: white;
+    width: 83vw;
+    height: 50vh;
+    border: 1px solid #DEE2E6;
+    border-radius: 5px;
+    margin-left: 3.5vw;
+    margin-top: 5vh;
+    transition: all .4s;
+}
+.tm_check:hover {
+    width: 84vw;
+    height: 51vh
+}
+.tm_check th{
+    background-color: rgb(196,218,254);
+    border-bottom: .5px solid rgb(215,219,224);
+    text-align: center;
+}
+
+.text_cus{
+    font-weight: 600;
+    margin:10px;
+    font-size: 22px;
+}
+
+.voc_content {
+    overflow: scroll;
+    white-space: nowrap;
+    height: 41.5vh;
+    width: 82.5vw;
+    transition: all .4s;
+}
+.voc_table thead tr th {
+    position: sticky;
+    top: 0px;
+    background-color: #9baec8 !important;
+}
+.tm_check:hover .voc_content{
+    width: 83.8vw;
+    height: 42.7vh;
+}

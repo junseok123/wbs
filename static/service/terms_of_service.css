@@ -1,0 +1,45 @@
+* {
+    margin: 0;
+    padding:0;
+}
+.title{
+    padding-top: 35px;
+    padding-left: 60px;
+}
+.white{
+    width: auto; height: auto;
+    background-color: white;
+    margin: 50px;
+    border-color: rgb(227,229,238);
+    border-style: solid ;
+    border-radius: 10px;
+}
+.content{
+    margin: 50px;
+}
+#privacy{
+    font-weight: 700;
+    font-size: large;
+}
+.jo{
+    font-size: 18px;
+    font-weight: 600;
+}
+.letter{
+    font-size:15px
+}
+.center {
+    display: flex;
+    flex-direction: column;
+    margin-right: 30vw;
+    align-items: center;
+    justify-content: center;
+}
+
+#logo{
+    height: 60px;
+    width: 150px;
+    position: absolute;
+    top: 15px;
+    left: 30px;
+}

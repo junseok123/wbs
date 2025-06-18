@@ -1,0 +1,97 @@
+i {
+    font-size: 28px;
+}
+.btn-bd-primary {
+    --bs-btn-font-weight: 600;
+    --bs-btn-color: white;
+    --bs-btn-bg: #304070;
+    --bs-btn-border-color: #304070;
+    --bs-btn-hover-color: var(--bs-white);
+    --bs-btn-hover-bg: #8EC0E4;
+    --bs-btn-hover-border-color: #8EC0E4;
+    --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+    --bs-btn-active-color: var(--bs-btn-hover-color);
+    --bs-btn-active-bg: #8EC0E4;
+    --bs-btn-active-border-color: #8EC0E4;
+  }
+
+.btn-current {
+    --bs-btn-font-weight: 600;
+    --bs-btn-color: #ffffff;
+    --bs-btn-bg:  #8EC0E4;
+    --bs-btn-border-color:  #8EC0E4;
+    --bs-btn-hover-color: var(--bs-white);
+    --bs-btn-hover-bg: #8EC0E4;
+    --bs-btn-hover-border-color: #8EC0E4;
+    --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+    --bs-btn-active-color: var(--bs-btn-hover-color);
+    --bs-btn-active-bg: #8EC0E4;
+    --bs-btn-active-border-color: #8EC0E4;
+}
+.main{
+    display: flex;
+    height: 90vh;
+}
+.map{
+    height:90vh;
+}
+.today_construction{
+    width: 40.7vw;
+    height: 90vh;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+.file-label {
+    background-color: #5b975b;
+    color: #fff;
+    padding: 10px 0;
+    width: 10%;
+    border-radius: 6px;
+    cursor: pointer;
+    float: right;
+    margin-right: 30px;
+}
+.file {
+    display: none;
+}
+
+#today_text {
+    font-size: 28px;
+}
+.today_header{
+    padding-top:10px;
+    padding-bottom: 10px;
+    border-bottom: 1.5px solid gray;
+}
+table{
+    width: 100%;
+    border-collapse: collapse;
+}
+th,td {
+    border-bottom: 0.5px solid gray;
+    padding:10px
+}
+.map_button{
+    border: 0;
+    background-color: transparent;
+    color: #1EC28F;
+}
+#post_button {
+    height: 30px;
+    width: 100px;
+    background-color: #5cb85c;
+    border-radius: 7px;
+    color: white;
+    border: none;
+    transition: 0.3s ease;
+    margin-left: 20px;
+}
+#post_button:hover {
+    height: 40px;
+    background-color: #367c36;
+    color: white;
+}
+#myForm {
+    border-top: 2px solid gray; 
+}

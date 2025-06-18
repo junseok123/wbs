@@ -1,0 +1,89 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- jqueary -->
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+
+    <!-- favicon -->
+    <link rel="shortcut icon" href="{% static 'favicon/favicon_square.png' %}"/>
+
+    <title>S.LSI</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <img src="{% static 'logo(white).png' %}" alt="logo" id="logo">
+    <section class="login-form">
+        <h1>로그인</h1>
+        <form id="myForm" method="post">
+            {% csrf_token %}
+            <div class="int-area">
+                <input type="text" name="usr_id" id="username" autocomplete="off" required>
+                <label for="username">ID</label>
+            </div>
+            <div class="int-area">
+                <input type="password" name="password" id="pw" autocomplete="off" required>
+                <label for="pw">PASSWORD</label>
+            </div>
+            <div class="btn-area">
+                <button type="submit">LOGIN</button>
+            </div>
+        </form>
+        <div class="caption">
+            <div id="signup">
+                <p style="color:#999;">아이디가 없으신가요? <a href="{% url 'join' %}"><u><strong>가입하러 가기</strong></u></a></p>
+                
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="footer">
+            <ul class="ul">
+                <li><a href="../privacy_policy">Privacy Policy</a></li>
+                <li><a href="../terms_of_service">Terms of Service</a></li>
+                <li><a href="/users/aboutus">About us</a></li>
+            </ul>
+        </div>
+        <div class="footer-bottom">
+            <p>© Qroad LSI.</p>
+        </div>
+    </footer>
+</body>
+</html>
+
+<script>
+    // 로그인 폼 전송
+    $('#myForm').submit(function(event) {
+        event.preventDefault(); // 폼의 기본 동작을 막음
+    
+        // 폼 데이터 가져오기
+        var formData = $(this).serialize();
+    
+        // AJAX 요청 보내기
+        $.ajax({
+            url: '/login/', // 회원가입 처리 URL을 지정
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                // 응답 처리
+                if (response.message === 'Login success') {
+                // 로그인 성공
+                    window.location.href = '/home/'; // 홈 페이지로 이동
+                }  else { // 로그인 실패
+                    alert('아이디 또는 비밀번호를 잘못 입력했습니다.');
+                }
+            },
+            error: function(xhr, status, error) {
+                // 요청 실패
+                alert('요청실패');
+                console.log('Error:', error);
+            }
+        });
+    });    
+</script>

@@ -1,0 +1,458 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html style="min-height: 100vh">
+  <head lang="ko">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+      integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- bootstrap 아이콘 -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
+
+    <!-- favicon -->
+    <link
+      rel="shortcut icon"
+      href="{% static 'favicon/favicon_square.png' %}"
+    />
+
+    <title>AICI : VOC확인</title>
+    <style>
+      a {
+        text-decoration: none;
+      }
+      i {
+        font-size: 28px;
+      }
+
+      .btn-bd-primary {
+        --bs-btn-font-weight: 600;
+        --bs-btn-color: white;
+        --bs-btn-bg: #304070;
+        --bs-btn-border-color: #304070;
+        --bs-btn-hover-color: var(--bs-white);
+        --bs-btn-hover-bg: #8ec0e4;
+        --bs-btn-hover-border-color: #8ec0e4;
+        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+        --bs-btn-active-color: var(--bs-btn-hover-color);
+        --bs-btn-active-bg: #8ec0e4;
+        --bs-btn-active-border-color: #8ec0e4;
+      }
+
+      .btn-current {
+        --bs-btn-font-weight: 600;
+        --bs-btn-color: #ffffff;
+        --bs-btn-bg: #8ec0e4;
+        --bs-btn-border-color: #8ec0e4;
+        --bs-btn-hover-color: var(--bs-white);
+        --bs-btn-hover-bg: #8ec0e4;
+        --bs-btn-hover-border-color: #8ec0e4;
+        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+        --bs-btn-active-color: var(--bs-btn-hover-color);
+        --bs-btn-active-bg: #8ec0e4;
+        --bs-btn-active-border-color: #8ec0e4;
+      }
+
+      .btn-upload {
+        cursor: pointer;
+        display: flex;
+      }
+      .btn-upload:hover {
+        color: #0073ff;
+      }
+      .main_text {
+        height: 90vh;
+        width: 90vw;
+        padding: 0;
+      }
+      .management {
+        font-size: 30px;
+        margin-left: 30px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      .flex {
+        display: flex;
+        justify-content: space-between;
+      }
+      #myForm {
+        align-items: center;
+      }
+      #post_button {
+        height: 30px;
+        background-color: #5cb85c;
+        font-size: 13px;
+        border-radius: 7px;
+        color: white;
+        border: none;
+        transition: 0.3s ease;
+      }
+      #post_button:hover {
+        height: 40px;
+        background-color: #367c36;
+        color: white;
+        border: none;
+      }
+      .p {
+        margin: 0;
+      }
+      /*요게 테이블 사이즈*/
+      .main_content {
+        overflow: auto;
+        height: 85vh;
+        width: 90vw;
+        border-bottom: 1px solid rgb(215, 219, 223);
+      }
+      table {
+        border: 1px solid rgb(215, 219, 223);
+        table-layout: fixed;
+        text-align: center;
+      }
+      td {
+        height: 50px;
+        word-break: break-all;
+        padding: 5px;
+        border: 1px solid rgb(215, 219, 223);
+      }
+      th {
+        height: 50px;
+        padding: 5px;
+        position: sticky;
+        top: 0px;
+        background-color: rgb(197, 218, 254) !important;
+      }
+      .th1 {
+        width: 9vw;
+      }
+      .th2 {
+        width: 5vw;
+      }
+      .th3 {
+        width: 20vw;
+      }
+      .th4 {
+        width: 8vw;
+      }
+      .th5 {
+        width: 13vw;
+      }
+      .th6,
+      .th7,
+      .th8,
+      .th9 {
+        width: 5vw;
+      }
+      .th10 {
+        width: 15vw;
+      }
+
+      .tm_table:hover {
+        background-color: #f0f0f0;
+      }
+      #file-upload-button {
+        color: red;
+      }
+    </style>
+  </head>
+  <body style="min-height: 100vh">
+    <header>
+      <!-- 상단바 -->
+      <nav class="navbar navbar-expand-lg border-bottom">
+        <div class="container-fluid row">
+          <div class="col-2 row">
+            {% comment %} 로고 {% endcomment %}
+            <div>
+              <a href="/"
+                ><img src="{% static 'logo_7.png' %}" class="w-50" id="logo"
+              /></a>
+            </div>
+          </div>
+          <div class="col">
+            {% if request.user.is_authenticated %}
+            <h5 class="m-0">
+              <p style="display: inline">{{ request.user.name }}</p>
+              엔지니어님, 환영합니다.
+            </h5>
+            {% else %}
+            <p>User is not logged in</p>
+            {% endif %}
+          </div>
+          <div class="col-auto">
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                  <a class="nav-link me-2" href="/users/logout"
+                    ><i class="bi bi-box-arrow-right"></i
+                  ></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <div
+      class="row container-fluid p-0 m-0"
+      style="min-height: 100vh; display: flex"
+    >
+      <!-- 사이드바 -->
+      <div class="col-md-1 border-end text-center">
+        <!-- 아이콘 -->
+        <div>
+          <ul class="nav flex-column">
+            <!-- 홈 -->
+            <li class="nav-item m-2">
+              <a class="nav-link active mt-4" aria-current="page" href="/">
+                <button
+                  type="button"
+                  class="btn btn-bd-primary rounded-circle"
+                  style="width: 50px; height: 50px"
+                  onclick="location.href='/'"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="currentColor"
+                    class="bi bi-house"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"
+                    />
+                  </svg>
+                </button>
+              </a>
+            </li>
+            <!-- 공지사항 -->
+            <li class="nav-item m-2">
+              <a class="nav-link mt-4" href="#">
+                <button
+                  type="button"
+                  class="btn btn-bd-primary rounded-circle"
+                  style="width: 50px; height: 50px"
+                  onclick="location.href='/board'"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="currentColor"
+                    class="bi bi-megaphone"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M13 2.5a1.5 1.5 0 0 1 3 0v11a1.5 1.5 0 0 1-3 0v-.214c-2.162-1.241-4.49-1.843-6.912-2.083l.405 2.712A1 1 0 0 1 5.51 15.1h-.548a1 1 0 0 1-.916-.599l-1.85-3.49a68.14 68.14 0 0 0-.202-.003A2.014 2.014 0 0 1 0 9V7a2.02 2.02 0 0 1 1.992-2.013 74.663 74.663 0 0 0 2.483-.075c3.043-.154 6.148-.849 8.525-2.199V2.5zm1 0v11a.5.5 0 0 0 1 0v-11a.5.5 0 0 0-1 0zm-1 1.35c-2.344 1.205-5.209 1.842-8 2.033v4.233c.18.01.359.022.537.036 2.568.189 5.093.744 7.463 1.993V3.85zm-9 6.215v-4.13a95.09 95.09 0 0 1-1.992.052A1.02 1.02 0 0 0 1 7v2c0 .55.448 1.002 1.006 1.009A60.49 60.49 0 0 1 4 10.065zm-.657.975 1.609 3.037.01.024h.548l-.002-.014-.443-2.966a68.019 68.019 0 0 0-1.722-.082z"
+                    />
+                  </svg>
+                </button>
+              </a>
+            </li>
+            <!-- TM 확인 -->
+            <li class="nav-item m-2">
+              <a class="nav-link mt-4" href="#">
+                <button
+                  type="button"
+                  class="btn btn-current rounded-circle"
+                  style="width: 50px; height: 50px"
+                  onclick="location.href='/voc'"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="currentColor"
+                    class="bi bi-telephone"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"
+                    />
+                  </svg>
+                </button>
+              </a>
+            </li>
+            <!-- 시외공사 -->
+            <li class="nav-item m-2">
+              <a class="nav-link mt-4" href="#">
+                <button
+                  type="button"
+                  class="btn btn-bd-primary rounded-circle"
+                  style="width: 50px; height: 50px"
+                  onclick="location.href='/construction'"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="currentColor"
+                    class="bi bi-geo-alt-fill"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"
+                    />
+                  </svg>
+                </button>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- 메인 컨텐츠 -->
+      <div class="main_text">
+        <div class="flex">
+          <div class="management" style="display: inline-block">고객관리</div>
+          <form
+            method="POST"
+            enctype="multipart/form-data"
+            id="myForm"
+            style="display: flex"
+          >
+            {% csrf_token %}
+            <p class="p">
+              <label for="id_voc_file"></label>
+              <input type="file" name="voc_file" required id="id_voc_file" />
+            </p>
+            <p class="p">
+              <label for="id_voc_desc">파일/고객 이름:</label>
+              <input
+                type="text"
+                name="voc_desc"
+                maxlength="4"
+                id="id_voc_desc"
+              />
+            </p>
+            <button type="submit" id="post_button" style="margin-left: 20px">
+              업로드
+            </button>
+          </form>
+        </div>
+        <div class="col p-0">
+          <div class="main_content mb-5">
+            <table>
+              <tr>
+                <th class="th1">접수 시각</th>
+                <th class="th2">고객</th>
+                <th class="th3">신고자 의견</th>
+                <th class="th4">전화번호</th>
+                <th class="th5">주소</th>
+                <th class="th6">중요도</th>
+                <th class="th7">TM 상황</th>
+                <th class="th8">응답</th>
+                <th class="th9">응답결과</th>
+                <th class="th10">판단근거</th>
+              </tr>
+              {% if data %} {% for vocs in data %}
+              <tr class="tm_table">
+                <td>{{ vocs.receipt }}</td>
+                <td>{{ vocs.cust_name }}</td>
+                <td>{{ vocs.declaration }}</td>
+                <td>{{ vocs.cust_num }}</td>
+                <td>{{ vocs.cust_ads }}</td>
+                {% csrf_token %} {% if vocs.cust_importance %}
+                <td style="color: red; font-weight: 800">긴급</td>
+                {% else %}
+                <td>일반</td>
+                {% endif %} {% csrf_token %} {% if vocs.is_tm %}
+                <td style="color: #1ec28f; font-weight: 600; font-size: large">
+                  <i class="bi bi-check"></i>
+                </td>
+                {% else %}
+                <td style="color: red; font-weight: 600; font-size: large">
+                  <i class="bi bi-x"></i>
+                </td>
+                {% endif %} {% csrf_token %} {% if vocs.is_answer %}
+                <td style="color: #1ec28f; font-weight: 600; font-size: large">
+                  <i class="bi bi-check"></i>
+                </td>
+                {% else %}
+                <td style="color: red; font-weight: 600; font-size: large">
+                  <i class="bi bi-x"></i>
+                </td>
+                {% endif %} {% csrf_token %} {% if vocs.tm_result %}
+                <td>양호</td>
+                {% else %}
+                <td style="color:red;">불량</td>
+                {% endif %}
+                <td>{{ vocs.tm_judge }}</td>
+              </tr>
+              {% endfor %} {% endif %}
+            </table>
+          </div>
+          <!-- Footer -->
+          <footer
+            class="text-center text-lg-start text-white"
+            style="background-color: #9baec8"
+          >
+            <!-- Grid container -->
+            <div class="p-3 pb-3">
+              <section class="">
+                <div class="row column-gap-5">
+                  <div class="col 6mx-auto mt-3"></div>
+                  <!-- Grid column -->
+                  <div
+                    class="col-md-5 col-lg-5 col-xl-5 ms-5 mx-auto mt-3 text-center"
+                  >
+                    <div class="row text-center">
+                      <h6 class="col text-uppercase mb-4 font-weight-bold">
+                        <a href="/users/privacy_policy" style="color: white"
+                          >Privacy Policy</a
+                        >
+                      </h6>
+                      <h6 class="col text-uppercase mb-4 font-weight-bold">
+                        <a href="/users/terms_of_service" style="color: white"
+                          >Terms of Service</a
+                        >
+                      </h6>
+                      <h6 class="col text-uppercase mb-4 font-weight-bold">
+                        <a href="/users/aboutus" style="color: white"
+                          >About us</a
+                        >
+                      </h6>
+                    </div>
+                    <div class="text-center p-3">
+                      2023 AICI_36 Corp. All rights reserved.
+                    </div>
+                  </div>
+                  <div class="col mx-auto ms-5 mt-3 text-center">
+                    <div class="ms-5">
+                      <h6 class="text-uppercase font-weight-bold">Follow us</h6>
+                      <a
+                        class="btn-floating mb-4 rounded-circle"
+                        href="https://github.com/jisoo29/AI_36_Project"
+                        role="button"
+                        ><i
+                          class="bi bi-github"
+                          style="font-size: 2.3rem; color: white"
+                        ></i
+                      ></a>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

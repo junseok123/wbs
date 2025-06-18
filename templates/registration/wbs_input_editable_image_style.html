@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>WBS 입력 및 수정</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 40px; background: #f8f8f8; }
+        table { width: 100%; border-collapse: collapse; margin-top: 30px; background-color: white; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+        th { background-color: #d4e4ff; }
+        input, select, textarea {
+            width: 100%;
+            padding: 4px;
+            font-size: 13px;
+        }
+        .btn { padding: 5px 10px; margin: 2px; cursor: pointer; }
+        .submit-btn { margin-top: 15px; text-align: center; }
+    </style>
+    <script>
+        function editRow(id) {
+            const row = document.getElementById('row' + id);
+            const cells = row.querySelectorAll('td');
+
+            for (let i = 1; i <= 9; i++) {
+                const text = cells[i].innerText;
+                cells[i].setAttribute('data-original', text);
+                if (i === 8) { // progress dropdown
+                    cells[i].innerHTML = `
+                        <select>
+                            <option value="Wait">Wait</option>
+                            <option value="In progress" ${text === 'In progress' ? 'selected' : ''}>In progress</option>
+                            <option value="COMPLETE" ${text === 'COMPLETE' ? 'selected' : ''}>COMPLETE</option>
+                            <option value="Hold" ${text === 'Hold' ? 'selected' : ''}>Hold</option>
+                        </select>
+                    `;
+                } else {
+                    cells[i].innerHTML = '<input type="text" value="' + text + '">';
+                }
+            }
+
+            cells[10].innerHTML = `
+                <button class="btn" onclick="saveRow(${id})">저장</button>
+                <button class="btn" onclick="cancelEdit(${id})">취소</button>
+            `;
+        }
+
+        function saveRow(id) {
+            const row = document.getElementById('row' + id);
+            const cells = row.querySelectorAll('td');
+
+            for (let i = 1; i <= 9; i++) {
+                const val = cells[i].querySelector('input, select').value;
+                cells[i].innerText = val;
+            }
+
+            cells[10].innerHTML = '<button class="btn" onclick="editRow(' + id + ')">수정</button>';
+        }
+
+        function cancelEdit(id) {
+            const row = document.getElementById('row' + id);
+            const cells = row.querySelectorAll('td');
+
+            for (let i = 1; i <= 9; i++) {
+                const original = cells[i].getAttribute('data-original');
+                cells[i].innerText = original;
+            }
+
+            cells[10].innerHTML = '<button class="btn" onclick="editRow(' + id + ')">수정</button>';
+        }
+    </script>
+</head>
+<body>
+    <h3>📝 WBS 입력 폼</h3>
+    <form method="post" action="/submit_wbs/">
+        <table>
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>TASK TITLE</th>
+                    <th>TASK OWNER</th>
+                    <th>Device</th>
+                    <th>START DATE</th>
+                    <th>DUE DATE</th>
+                    <th>Tester</th>
+                    <th>DURATION</th>
+                    <th>PROGRESS</th>
+                    <th>Comment</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td><input type="text" name="task_title"></td>
+                    <td><input type="text" name="task_owner"></td>
+                    <td><input type="text" name="device"></td>
+                    <td><input type="date" name="start_date"></td>
+                    <td><input type="date" name="due_date"></td>
+                    <td><input type="text" name="tester"></td>
+                    <td><input type="number" name="duration" min="0"></td>
+                    <td>
+                        <select name="progress">
+                            <option value="Wait">Wait</option>
+                            <option value="In progress">In progress</option>
+                            <option value="COMPLETE">COMPLETE</option>
+                            <option value="Hold">Hold</option>
+                        </select>
+                    </td>
+                    <td><textarea name="comment"></textarea></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="submit-btn">
+            <button type="submit" class="btn">제출</button>
+        </div>
+    </form>
+
+    <h3 style="margin-top: 60px;">📋 기존 WBS 항목</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>TASK TITLE</th>
+                <th>TASK OWNER</th>
+                <th>Device</th>
+                <th>START DATE</th>
+                <th>DUE DATE</th>
+                <th>Tester</th>
+                <th>DURATION</th>
+                <th>PROGRESS</th>
+                <th>Comment</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr id="row1">
+                <td>1</td>
+                <td>Flip7 GFP Compile Log 확보 요청</td>
+                <td>곽한호</td>
+                <td>Solomon - 32</td>
+                <td>2025-06-17</td>
+                <td>2025-06-19</td>
+                <td>이수연</td>
+                <td>2</td>
+                <td>In progress</td>
+                <td>-</td>
+                <td><button class="btn" onclick="editRow(1)">수정</button></td>
+            </tr>
+            <tr id="row2">
+                <td>2</td>
+                <td>Flip7 GFP Compile Log 확보 요청</td>
+                <td>곽한호</td>
+                <td>Solomon - 32</td>
+                <td>2025-06-17</td>
+                <td>2025-06-19</td>
+                <td>이수연</td>
+                <td>2</td>
+                <td>In progress</td>
+                <td>-</td>
+                <td><button class="btn" onclick="editRow(2)">수정</button></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
