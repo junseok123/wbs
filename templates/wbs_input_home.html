@@ -55,7 +55,7 @@
                     <ul class="nav flex-column">
                         <!-- 홈 -->
                         <li class="nav-item m-2">
-                            <a class="nav-link active mt-4" aria-current="page" href="/">
+                            <a class="nav-link active mt-4" aria-current="page" href="/home">
                                 <button type="button" class="btn btn-current rounded-circle" style="width: 50px; height: 50px;" onclick ="location.href='/home'">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
                                         <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"/>
@@ -98,56 +98,52 @@
             </div>
 
     <!-- 메인 콘텐츠 -->
-    <div class="col p-4">
-      <h3>📋 WBS 항목 관리</h3>
-      <button onclick="openModal()" class="btn btn-primary mb-3">+ 새 항목 추가</button>
+      <div class="col p-4">
+        <h3>📋 WBS 항목 관리</h3>
+        <button onclick="openModal()" class="btn btn-primary mb-3">+ 새 항목 추가</button>
 
-      <!-- 모달 -->
-      <div id="inputModal" style="display:none; position:fixed; inset:0; background-color:rgba(0,0,0,0.5); z-index:1050; display:flex; align-items:center; justify-content:center;">
-        <div style="background:white; width:600px; padding:20px; border-radius:8px;">
-          <h4>새 항목 추가</h4>
-          <table>
-            <tr><td>TASK TITLE</td><td><input type="text" id="new_task_title"></td></tr>
-            <tr><td>TASK OWNER</td><td><input type="text" id="new_task_owner"></td></tr>
-            <tr><td>Device</td><td><input type="text" id="new_device"></td></tr>
-            <tr><td>START DATE</td><td><input type="date" id="new_start_date"></td></tr>
-            <tr><td>DUE DATE</td><td><input type="date" id="new_due_date"></td></tr>
-            <tr><td>Tester</td><td><input type="text" id="new_tester"></td></tr>
-            <tr><td>DURATION</td><td><input type="number" id="new_duration" min="0"></td></tr>
-            <tr><td>PROGRESS</td>
-              <td><select id="new_progress">
-                <option>Wait</option>
-                <option>In progress</option>
-                <option>COMPLETE</option>
-                <option>Hold</option>
-              </select></td></tr>
-            <tr><td>Comment</td><td><textarea id="new_comment"></textarea></td></tr>
-          </table>
-          <div class="text-end mt-3">
-            <button class="btn btn-success" onclick="addRow()">추가</button>
-            <button class="btn btn-secondary" onclick="closeModal()">닫기</button>
+        <!-- 테이블 -->
+        <table>
+          <thead>
+            <tr>
+              <th>No.</th><th>TASK TITLE</th><th>TASK OWNER</th><th>Device</th><th>START DATE</th>
+              <th>DUE DATE</th><th>Tester</th><th>DURATION</th><th>PROGRESS</th><th>Comment</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="wbsTableBody">
+            {% for item in wbs_items %}
+            <tr id="row{{ forloop.counter }}">
+              <td>{{ item.no }}</td>
+              <td>{{ item.task_title }}</td>
+              <td>{{ item.task_owner }}</td>
+              <td>{{ item.device }}</td>
+              <td>{{ item.start_date }}</td>
+              <td>{{ item.due_date }}</td>
+              <td>{{ item.tester }}</td>
+              <td>{{ item.duration }}</td>
+              <td>{{ item.progress }}</td>
+              <td>{{ item.comment }}</td>
+              <td><button class="btn btn-outline-primary btn-sm">수정</button></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="11">등록된 데이터가 없습니다.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <!-- 모달 -->
+        <div id="inputModal" style="display:none; position:fixed; inset:0; background-color:rgba(0,0,0,0.5); z-index:1050; display:flex; align-items:center; justify-content:center;">
+          <div style="background:white; width:600px; padding:20px; border-radius:8px;">
+            <h4>새 항목 추가</h4>
+            <!-- 여기에 입력 폼 필요 시 추가 가능 -->
+            <div class="text-end mt-3">
+              <button class="btn btn-success" onclick="addRow()">추가</button>
+              <button class="btn btn-secondary" onclick="closeModal()">닫기</button>
+            </div>
           </div>
         </div>
       </div>
-
-      <!-- 테이블 -->
-      <table>
-        <thead>
-          <tr>
-            <th>No.</th><th>TASK TITLE</th><th>TASK OWNER</th><th>Device</th><th>START DATE</th>
-            <th>DUE DATE</th><th>Tester</th><th>DURATION</th><th>PROGRESS</th><th>Comment</th><th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="wbsTableBody">
-          <tr id="row1">
-            <td>1</td><td>Flip7 GFP Compile Log 확보 요청</td><td>곽한호</td><td>Solomon - 32</td>
-            <td>2025-06-17</td><td>2025-06-19</td><td>이수연</td><td>2</td><td>In progress</td><td>-</td>
-            <td><button class="btn btn-outline-primary btn-sm" onclick="editRow(1)">수정</button></td>
-          </tr>
-        </tbody>
-      </table>
     </div>
-  </div>
 
 <script>
   let currentRowCount = 1;
