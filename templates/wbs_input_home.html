@@ -43,6 +43,15 @@
       --bs-btn-bg: #8ec0e4;
       --bs-btn-border-color: #8ec0e4;
     }
+    .fixed-pagination {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    padding: 0.5rem 0;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body>
@@ -114,7 +123,7 @@
             {% for item in wbs_items %}
             <tr id="row{{ forloop.counter }}">
               <td>{{ item.no }}</td>
-              <td>{{ item.task_title }}</td>
+              <td>{{ item.short_title }}</td>
               <td>{{ item.task_owner }}</td>
               <td>{{ item.device }}</td>
               <td>{{ item.start_date }}</td>
@@ -128,8 +137,18 @@
             {% empty %}
             <tr><td colspan="11">등록된 데이터가 없습니다.</td></tr>
             {% endfor %}
+            <div class="fixed-pagination d-flex justify-content-center">
+              {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-primary">이전</a>
+              {% endif %}
+                <span class="mx-2">페이지 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+              {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-primary">다음</a>
+              {% endif %}
+            </div>
           </tbody>
         </table>
+  
 
         <!-- 모달 -->
         <div id="inputModal" style="display:none; position:fixed; inset:0; background-color:rgba(0,0,0,0.5); z-index:1050; display:flex; align-items:center; justify-content:center;">
