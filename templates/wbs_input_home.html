@@ -52,6 +52,20 @@
     padding: 0.5rem 0;
     box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
     }
+    /* 공통 배지 스타일 */
+    .badge-status {
+      display: inline-block;
+      padding: .25em .5em;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: .25rem;
+          background: none;
+    }
+    /* 상태별 색상 */
+    .status-inprogress { color: #ff0707ff; }  /* 빨강 */
+    .status-complete   { color: #0D6EFD; }  /* 파란색 */
+    .status-wait       { color: #FFC107; }  /* 노란색 */
+    .status-hold       { color: #000; }  /* 검은색 */
   </style>
 </head>
 <body>
@@ -130,7 +144,17 @@
               <td>{{ item.due_date }}</td>
               <td>{{ item.tester }}</td>
               <td>{{ item.duration }}</td>
-              <td>{{ item.progress }}</td>
+              <td>
+                <span
+                  class="badge-status
+                        {% if item.progress == 'In progress' %}status-inprogress{% endif %}
+                        {% if item.progress == 'COMPLETE'   %}status-complete{% endif %}
+                        {% if item.progress == 'Wait'       %}status-wait{% endif %}
+                        {% if item.progress == 'Hold'       %}status-hold{% endif %}"
+                >
+                  {{ item.progress }}
+                </span>
+              </td>
               <td>{{ item.comment }}</td>
               <td><button class="btn btn-outline-primary btn-sm">수정</button></td>
             </tr>
