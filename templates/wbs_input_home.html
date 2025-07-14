@@ -130,7 +130,7 @@
           <thead>
             <tr>
               <th>No.</th><th>TASK TITLE</th><th>TASK OWNER</th><th>Device</th><th>START DATE</th>
-              <th>DUE DATE</th><th>Tester</th><th>DURATION</th><th>PROGRESS</th><th>Comment</th>
+              <th>DUE DATE</th><th>Tester</th><th>DURATION</th><th>PROGRESS</th><!--<th>Comment</th>-->
             </tr>
           </thead>
           <tbody id="wbsTableBody">
@@ -155,8 +155,7 @@
                   {{ item.progress }}
                 </span>
               </td>
-              <td>{{ item.comment }}</td>
-              <td><button class="btn btn-outline-primary btn-sm">수정</button></td>
+              <!--<td>{{ item.comment }}</td>-->
             </tr>
             {% empty %}
             <tr><td colspan="11">등록된 데이터가 없습니다.</td></tr>
