@@ -1,77 +1,76 @@
-# board/wbs_info.py
-
 import pandas as pd
+import re
 from board.models import WBSItem
 
 def load_wbs_from_csv(file_or_buffer):
     """
-    - 0~6행(메타 정보) 건너뛰고 7행을 헤더로 사용
-    - 빈 ‘302’ 레코드(헤더 다음 행에서 TASK TITLE이 NaN)를 삭제
-    - 컬럼명 통일, task_title 첫 줄만 남기기
+    - 첫 번째 행(인덱스 0)을 헤더로 사용하고, 두 번째 행(인덱스 1)을 건너뛰어 CSV를 읽습니다.
+    - 'task_title' 컬럼의 원본 멀티라인 데이터를 분리하여,
+      첫 줄은 task_title, 나머지는 task_content로 저장합니다.
+    - 컬럼명 통일, Unnamed 열 제거, 문자열 전처리 수행
+    - task_title이 NaN 혹은 빈 문자열인 행은 모두 제거
     """
-    # 1) 메타 정보 7행(skiprows=7) 건너뛰고 읽기
+    # 1) CSV 읽기: 헤더는 0행, 1행만 건너뛰기
     df = pd.read_csv(
         file_or_buffer,
-        skiprows=7,
+        skiprows=[1],
         encoding='utf-8-sig'
     )
 
-    # 2) 헤더 다음(302번) 레코드에서 TASK TITLE이 NaN인 행을 아예 제거
-    if 'TASK TITLE' in df.columns:
-        df = df[df['TASK TITLE'].notna()]
-
-    # 3) 컬럼명 정리
+    # 2) 컬럼명 정리: 소문자, 언더스코어, 온점 제거
     df.columns = (
         df.columns
           .str.strip()
           .str.lower()
-          .str.replace(' ', '_')
+          .str.replace(' ', '_', regex=False)
           .str.replace(r'\.', '', regex=True)
     )
 
-    # 4) Unnamed 컬럼(빈 첫 번째 컬럼) 삭제
+    # 3) Unnamed 열 제거
     df = df.loc[:, [c for c in df.columns if not c.startswith('unnamed')]]
 
-    # 5) 문자열 컬럼 앞뒤 공백 제거
+    # 4) 문자열 컬럼 전처리: 앞뒤 공백 제거
     for col in df.select_dtypes(include='object').columns:
         df[col] = df[col].astype(str).str.strip()
 
-    # 6) task_title은 셀 내 줄바꿈 기준 첫 줄만 추출
-    if 'task_title' in df.columns:
-        df['task_title'] = (
-            df['task_title']
-              .str.split(r'[\r\n]+', regex=True)
-              .str[0]
-              .str.strip()
-        )
+    # 5) 원본 멀티라인 task_title을 변수로
+    if 'task_title' not in df.columns:
+        # 컬럼이 없으면 바로 리턴
+        return 0
+    raw = df['task_title'].astype(str)
 
+    # 6) 원본 raw에 NaN 또는 빈 문자열인 행 제거
+    df = df[raw.str.strip() != '']
+    raw = raw[df.index]
+
+    # 7) 멀티라인 분리: 첫 줄 제목, 나머지 내용
+    titles = raw.str.split(r'[\r\n]+', regex=True).str
+    df['task_title'] = titles[0].str.strip()
+    df['task_content'] = raw.str.split(r'[\r\n]+', regex=True).apply(lambda parts: '\n'.join(parts[1:]).strip())
+
+    # 8) 최종 빈 제목 제거
+    df = df[df['task_title'].astype(bool)]
+
+    # 9) DB 인서트
     created = 0
     for _, row in df.iterrows():
-        title = row.get('task_title')
-        if not title:
-            continue
-
-        # 날짜 파싱 (NaT → None)
+        no_val       = int(row.get('no'))      if pd.notna(row.get('no'))       else None
+        duration_val = int(row.get('duration')) if pd.notna(row.get('duration')) else 0
         raw_s = pd.to_datetime(row.get('start_date'), errors='coerce')
-        raw_d = pd.to_datetime(row.get('due_date')  , errors='coerce')
-        start_val = raw_s.date() if not pd.isna(raw_s) else None
-        due_val   = raw_d.date() if not pd.isna(raw_d) else None
-
-        # 숫자 파싱
-        no_val       = int(row.get('no'))      if not pd.isna(row.get('no'))      else None
-        duration_val = int(row.get('duration')) if not pd.isna(row.get('duration')) else 0
+        raw_d = pd.to_datetime(row.get('due_date'),   errors='coerce')
 
         WBSItem.objects.create(
-            no         = no_val,
-            task_title = title,
-            task_owner = row.get('task_owner', ''),
-            device     = row.get('device', ''),
-            start_date = start_val,
-            due_date   = due_val,
-            tester     = row.get('tester', ''),
-            duration   = duration_val,
-            progress   = row.get('progress', ''),
-            comment    = row.get('comment', ''),
+            no           = no_val,
+            task_title   = row['task_title'],
+            task_content = row.get('task_content', ''),
+            task_owner   = row.get('task_owner', ''),
+            device       = row.get('device', ''),
+            start_date   = raw_s.date() if pd.notna(raw_s) else None,
+            due_date     = raw_d.date() if pd.notna(raw_d) else None,
+            tester       = row.get('tester', ''),
+            duration     = duration_val,
+            progress     = row.get('progress', ''),
+            comment      = row.get('comment', ''),
         )
         created += 1
 

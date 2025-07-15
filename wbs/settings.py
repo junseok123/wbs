@@ -139,3 +139,6 @@ LOGOUT_REDIRECT_URL = 'login_page'
 STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'tasks.CustomUser'
+
+DATE_FORMAT = 'Y-m-d'
+USE_L10N = False
