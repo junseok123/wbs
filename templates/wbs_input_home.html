@@ -124,6 +124,27 @@
       <div class="col p-4">
         <h3>📋 WBS 항목 관리</h3>
         <button onclick="openModal()" class="btn btn-primary mb-3">+ 새 항목 추가</button>
+      <div class="container my-4">
+
+        <!-- 1) 업로드 폼 -->
+        <form action="{% url 'wbs-board' %}" method="post" enctype="multipart/form-data" class="mb-3">
+          {% csrf_token %}
+          <div class="input-group">
+            <input type="file" name="csv_file" accept=".csv" class="form-control" required>
+            <button type="submit" class="btn btn-primary">CSV 업로드</button>            
+          </div>
+        </form>
+
+        <!-- 2) 메시지 출력 -->
+        {% if messages %}
+          {% for msg in messages %}
+            <div class="alert alert-{{ msg.tags }} mt-2">
+              {{ msg }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+
 
         <!-- 테이블 -->
         <table>
