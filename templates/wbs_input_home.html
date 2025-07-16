@@ -74,7 +74,7 @@
             </td>
             <td>{{ item.task_owner }}</td><td>{{ item.short_devices }}</td>
             <td>{{ item.start_date|date:"Y-m-d" }}</td><td>{{ item.due_date|date:"Y-m-d" }}</td>
-            <td>{{ item.tester }}</td><td>{{ item.duration }}</td>
+            <td>{{ item.tester }}</td><td>{{ item.business_days }}</td>
             <td><span class="badge-status {% if item.progress == "In progress" %}status-inprogress{% endif %} {% if item.progress == "COMPLETE" %}status-complete{% endif %} {% if item.progress == "Wait" %}status-wait{% endif %} {% if item.progress == "Hold" %}status-hold{% endif %}">{{ item.progress }}</span></td>
           </tr>
           {% empty %}<tr><td colspan="9" class="text-center">등록된 데이터가 없습니다.</td></tr>{% endfor %}
@@ -100,7 +100,7 @@
             start: "{{ item.start_date|date:'Y-m-d' }}",
             due:   "{{ item.due_date|date:'Y-m-d' }}",
             tester: "{{ item.tester|escapejs }}",
-            duration: "{{ item.duration }}",
+            duration: "{{ item.business_days }}",
             progress: "{{ item.progress|escapejs }}",
             comment:  "{{ item.comment|escapejs }}"
           }{% if not forloop.last %},{% endif %}
@@ -117,7 +117,7 @@
               <table class="table table-borderless text-start">
                 <tr><th>No.</th><td id="detail-no"></td></tr>
                 <tr><th>Title</th><td id="detail-title"></td></tr>
-                <tr><th>Content</th><td id="detail-content" style="white-space:pre-wrap;"></td></tr>
+                <tr><th>Task Content</th><td id="detail-content" style="white-space:pre-wrap;"></td></tr>
                 <tr><th>Owner</th><td id="detail-owner"></td></tr>
                 <tr><th>Device</th><td id="detail-device" style="white-space:pre-wrap;"></td></tr>
                 <tr><th>Start Date</th><td id="detail-start"></td></tr>

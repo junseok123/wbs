@@ -1,5 +1,8 @@
 import re
+import holidays
 from django.db import models
+import pandas as pd
+from datetime import timedelta
 
 class WBSItem(models.Model):
     no = models.PositiveIntegerField(unique=True)
@@ -38,3 +41,32 @@ class WBSItem(models.Model):
         clean = [p.strip() for p in parts if p.strip()]
         # 앞의 두 개만
         return ', '.join(clean[:2])
+    
+    @property
+    def duration_calc(self):
+        """
+        전체 기간(일수) 계산: due_date - start_date
+        """
+        if self.start_date and self.due_date and self.due_date >= self.start_date:
+            return (self.due_date - self.start_date).days
+        return 0
+
+    @property
+    def business_days(self):
+        """
+        대한민국 공휴일을 제외한 순영업일(일수)을 계산합니다.
+        공휴일 라이브러리 holidays.KR() 사용.
+        """
+        if not (self.start_date and self.due_date and self.due_date >= self.start_date):
+            return 0
+        # 연도 범위 내 한국 공휴일
+        years = list(range(self.start_date.year, self.due_date.year + 1))
+        kr_holidays = holidays.KR(years=years)
+        total_days = (self.due_date - self.start_date).days + 1
+        business = 0
+        for i in range(total_days):
+            day = self.start_date + timedelta(days=i)
+            # 평일 체크: 0~4 => 월~금
+            if day.weekday() < 5 and day not in kr_holidays:
+                business += 1
+        return business
