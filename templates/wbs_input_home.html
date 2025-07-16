@@ -96,7 +96,7 @@
     <div class="col p-4">
       <h3>📋 WBS 항목 관리</h3>
       <div class="d-flex align-items-center mb-3">
-        <button onclick="openInputModal()" class="btn btn-primary btn-sm me-3">+ 새 항목 추가</button>
+        <button class="btn btn-primary btn-sm me-3" data-bs-toggle="modal" data-bs-target="#addModal">새 항목 추가</button>
         <form action="{% url 'wbs-board' %}" method="post" enctype="multipart/form-data" class="d-flex align-items-center">
           {% csrf_token %}
           <input type="file" name="csv_file" accept=".csv" class="form-control form-control-sm w-auto" required>
@@ -123,11 +123,11 @@
               </a>
             </td>
             <td>{{ item.task_owner }}</td>
-            <td>{{ item.short_devices }}</td>
-            <td>{{ item.start_date|date:"Y-m-d" }}</td>
-            <td>{{ item.due_date|date:"Y-m-d" }}</td>
-            <td>{{ item.short_testers }}</td>
-            <td>{{ item.business_days }}</td>
+            <td>{{ item.short_devices |default:"-"  }}</td>
+            <td>{{ item.start_date |date:"Y-m-d" |default:"-"  }}</td>
+            <td>{{ item.due_date |date:"Y-m-d" |default:"-" }}</td>
+            <td>{{ item.short_testers |default:"-" }}</td>
+            <td>{{ item.business_days |default:"-" }}</td>
             <td><span class="badge-status {% if item.progress == "In progress" %}status-inprogress{% endif %} {% if item.progress == "COMPLETE" %}status-complete{% endif %} {% if item.progress == "Wait" %}status-wait{% endif %} {% if item.progress == "Hold" %}status-hold{% endif %}">{{ item.progress }}</span></td>
           </tr>
           {% empty %}<tr><td colspan="9" class="text-center">등록된 데이터가 없습니다.</td></tr>{% endfor %}
@@ -141,7 +141,7 @@
       </div>
 
       <!-- 데이터 맵 정의 -->
-      <script>
+    <script>
         const wbsData = {
           {% for item in page_obj %}
           "{{ item.no }}": {
@@ -159,27 +159,104 @@
           }{% if not forloop.last %},{% endif %}
           {% endfor %}
         };
-      </script>
+              // CSRF token helper
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let cookie of cookies) {
+            const [key, val] = cookie.trim().split('=');
+            if (key === name) { cookieValue = decodeURIComponent(val); break; }
+          }
+        }
+        return cookieValue;
+      }
+    </script>
 
       <!-- 상세 모달 -->
       <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
           <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title" id="detailModalLabel">항목 상세보기</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+            <div class="modal-header">
+              <h5 class="modal-title" id="detailModalLabel">항목 상세보기 / 수정</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
             <div class="modal-body">
-              <table class="table table-borderless text-start">
-                <tr><th>No.</th><td id="detail-no"></td></tr>
-                <tr><th>Title</th><td id="detail-title"></td></tr>
-                <tr><th>Task Content</th><td id="detail-content" style="white-space:pre-wrap;"></td></tr>
-                <tr><th>Owner</th><td id="detail-owner"></td></tr>
-                <tr><th>Device</th><td id="detail-device" style="white-space:pre-wrap;"></td></tr>
-                <tr><th>Start Date</th><td id="detail-start"></td></tr>
-                <tr><th>Due Date</th><td id="detail-due"></td></tr>
-                <tr><th>Tester</th><td id="detail-tester"></td></tr>
-                <tr><th>Duration</th><td id="detail-duration"></td></tr>
-                <tr><th>Progress</th><td id="detail-progress"></td></tr>
-                <tr><th>Comment</th><td id="detail-comment"></td></tr>
-              </table>
+              <!-- ▶ Read 모드 -->
+              <div id="read-mode">
+                <table class="table table-borderless text-start">
+                  <tr><th>No.</th><td id="detail-no"></td></tr>
+                  <tr><th>Title</th><td id="detail-title"></td></tr>
+                  <tr><th>Task Content</th><td id="detail-content" style="white-space:pre-wrap;"></td></tr>
+                  <tr><th>Owner</th><td id="detail-owner"></td></tr>
+                  <tr><th>Device</th><td id="detail-device"></td></tr>
+                  <tr><th>Start Date</th><td id="detail-start"></td></tr>
+                  <tr><th>Due Date</th><td id="detail-due"></td></tr>
+                  <tr><th>Tester</th><td id="detail-tester"></td></tr>
+                  <tr><th>Duration</th><td id="detail-duration"></td></tr>
+                  <tr><th>Progress</th><td id="detail-progress"></td></tr>
+                  <tr><th>Comment</th><td id="detail-comment"></td></tr>
+                </table>
+              </div>
+              <!-- ▶ Edit 모드 -->
+              <div id="edit-mode" style="display:none;">
+                <form id="modal-edit-form" method="post" data-url-template="{% url 'wbs_edit' 0 %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="no" id="form-no">
+                  <div class="mb-3">
+                    <label class="form-label">Title</label>
+                    <input type="text" name="task_title" id="form-title" class="form-control">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Task Content</label>
+                    <textarea name="task_content" id="form-content" class="form-control" rows="4"></textarea>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Owner</label>
+                      <input type="text" name="task_owner" id="form-owner" class="form-control">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Device</label>
+                      <input type="text" name="device" id="form-device" class="form-control">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Start Date</label>
+                      <input type="date" name="start_date" id="form-start" class="form-control">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Due Date</label>
+                      <input type="date" name="due_date" id="form-due" class="form-control">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Tester</label>
+                      <input type="text" name="tester" id="form-tester" class="form-control">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Progress</label>
+                      <select name="progress" id="form-progress" class="form-select">
+                        <option>In progress</option>
+                        <option>COMPLETE</option>
+                        <option>Wait</option>
+                        <option>Hold</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Comment</label>
+                    <textarea name="comment" id="form-comment" class="form-control" rows="2"></textarea>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button id="edit-toggle-btn" type="button" class="btn btn-primary btn-sm">수정</button>
+              <button id="save-btn" type="button" class="btn btn-success btn-sm" style="display:none;">저장</button>
+              <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">닫기</button>
             </div>
           </div>
         </div>
@@ -196,6 +273,83 @@
         </div>
       </div>
     </div>
+    <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">새 WBS 항목 추가</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="modal-add-form" data-url-template="/board/api/create/">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input type="text" name="task_title" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Content</label>
+                <textarea name="task_content" class="form-control" rows="4"></textarea>
+              </div>
+              <!-- 아래 필드도 Edit 모달과 동일한 구조로 추가 -->
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Owner</label>
+                  <input type="text" name="task_owner" class="form-control">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Device</label>
+                  <input type="text" name="device" class="form-control" placeholder="쉼표(,)로 구분">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Start Date</label>
+                  <input type="date" name="start_date" class="form-control">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Due Date</label>
+                  <input type="date" name="due_date" class="form-control">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Tester</label>
+                  <input type="text" name="tester" class="form-control" placeholder="첫 2명만 보여집니다">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Progress</label>
+                  <select name="progress" class="form-select">
+                    <option>In progress</option>
+                    <option>COMPLETE</option>
+                    <option>Wait</option>
+                    <option>Hold</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Comment</label>
+                <textarea name="comment" class="form-control" rows="2"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              id="add-save-btn"
+              type="button"
+              class="btn btn-success btn-sm">
+              추가
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm"
+              data-bs-dismiss="modal">
+              닫기
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -203,27 +357,76 @@
     detailModal.addEventListener('show.bs.modal', function(event) {
       const no = event.relatedTarget.getAttribute('data-no');
       const data = wbsData[no] || {};
-      document.getElementById('detail-no').textContent      = data.no || '';
-      document.getElementById('detail-title').textContent   = data.title || '';
-      document.getElementById('detail-content').innerHTML   = (data.content || '').replace(/\r?\n/g, '<br>');
-      document.getElementById('detail-owner').textContent   = data.owner || '';
-      // Device: newline separated -> comma separated
-      document.getElementById('detail-device').textContent =
+      // Read 모드 채우기
+      document.getElementById('detail-no').textContent      = data.no;
+      document.getElementById('detail-title').textContent   = data.title;
+      document.getElementById('detail-content').innerHTML   = (data.content||'').replace(/\r?\n/g,'<br>');
+      document.getElementById('detail-owner').textContent   = data.owner;
+      document.getElementById('detail-device').textContent  = (data.device||'')
+        .split(/\r?\n/) .map(s=>s.trim()).filter(s=>s).join(', ');
+      document.getElementById('detail-start').textContent   = data.start;
+      document.getElementById('detail-due').textContent     = data.due;
+      document.getElementById('detail-tester').textContent  = data.tester;
+      document.getElementById('detail-duration').textContent= data.duration;
+      document.getElementById('detail-progress').textContent= data.progress;
+      document.getElementById('detail-comment').textContent = data.comment;
+      // Edit 폼 세팅
+      document.getElementById('form-no').value      = no;
+      document.getElementById('form-title').value   = data.title;
+      document.getElementById('form-content').value = data.content;
+      document.getElementById('form-owner').value   = data.owner;
+      document.getElementById('form-device').value =
         (data.device || '')
-          .split(/\r?\n/)
-          .map(s => s.trim())
-          .filter(s => s)
+          .split(/\r?\n/)        // 원본에 포함된 CR/LF 기준 분리
+          .map(s => s.trim())    // 앞뒤 공백 제거
+          .filter(s => s)        // 빈 문자열 제거
           .join(', ');
-      document.getElementById('detail-start').textContent   = data.start || '';
-      document.getElementById('detail-due').textContent     = data.due   || '';
-      document.getElementById('detail-tester').textContent  = data.tester || '';
-      document.getElementById('detail-duration').textContent= data.duration || '';
-      document.getElementById('detail-progress').textContent= data.progress || '';
-      document.getElementById('detail-comment').textContent = data.comment  || '';
+      document.getElementById('form-start').value   = data.start;
+      document.getElementById('form-due').value     = data.due;
+      document.getElementById('form-tester').value  = data.tester;
+      document.getElementById('form-progress').value= data.progress;
+      document.getElementById('form-comment').value = data.comment;
+      // 모드 초기화
+      document.getElementById('read-mode').style.display   = '';
+      document.getElementById('edit-mode').style.display   = 'none';
+      document.getElementById('edit-toggle-btn').style.display = '';
+      document.getElementById('save-btn').style.display        = 'none';
+      // 폼 action URL
+      const form = document.getElementById('modal-edit-form');
+      form.action = form.dataset.urlTemplate.replace('0', no);
     });
-    function openInputModal() { document.getElementById('inputModal').style.display = 'flex'; }
-    function closeInputModal() { document.getElementById('inputModal').style.display = 'none'; }
-    function addRow() { alert('추가기능 준비중'); closeInputModal(); }
+    document.getElementById('edit-toggle-btn').addEventListener('click', () => {
+      document.getElementById('read-mode').style.display = 'none';
+      document.getElementById('edit-mode').style.display = '';
+      document.getElementById('edit-toggle-btn').style.display = 'none';
+      document.getElementById('save-btn').style.display        = '';
+    });
+    document.getElementById('save-btn').addEventListener('click', () => {
+      document.getElementById('modal-edit-form').submit();
+    });
+        // “추가” 버튼 클릭 시
+    document.getElementById('add-save-btn').addEventListener('click', () => {
+      const form = document.getElementById('modal-add-form');
+      const url  = form.dataset.urlTemplate;
+      const fd   = new FormData(form);
+
+      fetch(url, {
+        method: 'POST',
+        body: fd,
+        headers: { 'X-CSRFToken': getCookie('csrftoken') }
+      })
+      .then(res => res.json())
+      .then(json => {
+        if (json.status === 'success') {
+          // 모달 닫고 새로고침
+          bootstrap.Modal.getInstance(document.getElementById('addModal')).hide();
+          location.reload();
+        } else {
+          alert('추가 실패: ' + JSON.stringify(json.errors || json));
+        }
+      });
+    });
+
   </script>
 </body>
 </html>

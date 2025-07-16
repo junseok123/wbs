@@ -1,10 +1,15 @@
 import os
 from django.conf import settings
-from django.shortcuts import render, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
 from .models import WBSItem
 from django.contrib import messages
 from .wbs_info import load_wbs_from_csv
+from .forms import WBSItemForm
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.db.models import Max 
 
 def wbs_list_view(request):
     # --- 파일 업로드 처리 ---
@@ -37,3 +42,37 @@ def wbs_list_view(request):
         'page_obj': page_obj,
         'wbs_items': page_obj,     # 기존 루프 변수 유지
     })
+
+def wbs_edit(request, no):
+    item = get_object_or_404(WBSItem, no=no)
+    if request.method == 'POST':
+        form = WBSItemForm(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect('wbs-board')
+    else:
+        form = WBSItemForm(instance=item)
+    return render(request, 'wbs_edit.html', {
+        'form': form,
+        'item_no': no,
+    })
+
+@require_POST
+def wbs_create_api(request):
+    form = WBSItemForm(request.POST)
+    if form.is_valid():
+        # commit=False 로 인스턴스만 만들고
+        item = form.save(commit=False)
+        # 현재 최고 no 값을 가져와 +1
+        max_no = WBSItem.objects.aggregate(Max('no'))['no__max'] or 0
+        item.no       = max_no + 1
+
+        # 3) duration (영업일) 계산
+        item.duration = item.business_days
+
+        # 4) 최종 저장
+        item.save()
+        return JsonResponse({'status':'success'})
+    
+    # 유효성 검사 실패 시
+    return JsonResponse({'status':'error','errors':form.errors}, status=400)

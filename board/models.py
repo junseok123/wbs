@@ -44,7 +44,9 @@ class WBSItem(models.Model):
     @property
     def short_testers(self):
         parts = str(self.tester).split()
-        return ', '.join(parts[:2])
+        clean = [p.strip() for p in parts if p.strip() and p.lower() != 'nan']
+        return ', '.join(clean[:2])
+
 
     
     @property
