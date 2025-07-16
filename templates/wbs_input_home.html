@@ -29,18 +29,68 @@
     .modal-body table td {
       text-align: left !important;
     }
+    .modal-content {
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    }
+
+    /* 본문 영역만 스크롤 */
+    .modal-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    }
   </style>
 </head>
 <body>
-  <div class="row container-fluid p-0 m-0" style="min-height:100vh;">
-    <!-- 사이드바 -->
+  <div class="row container-fluid p-0 m-0" style="min-height: 100vh;">
+            <!-- 사이드바 -->
     <div class="col-md-1 border-end text-center">
-      <ul class="nav flex-column mt-4">
-        <li class="nav-item mb-3"><button class="btn btn-current rounded-circle" style="width:50px;height:50px;" onclick="location.href='/home'"><i class="bi bi-house" style="font-size:24px;"></i></button></li>
-        <li class="nav-item mb-3"><button class="btn btn-bd-primary rounded-circle" style="width:50px;height:50px;" onclick="location.href='/board'"><i class="bi bi-megaphone" style="font-size:24px;"></i></button></li>
-        <li class="nav-item mb-3"><button class="btn btn-bd-primary rounded-circle" style="width:50px;height:50px;" onclick="location.href='/voc'"><i class="bi bi-telephone" style="font-size:24px;"></i></button></li>
-        <li class="nav-item mb-3"><button class="btn btn-bd-primary rounded-circle" style="width:50px;height:50px;" onclick="location.href='/construction'"><i class="bi bi-geo-alt-fill" style="font-size:24px;"></i></button></li>
-      </ul>
+                <!-- 아이콘 -->
+      <div>
+        <ul class="nav flex-column">
+                        <!-- 홈 -->
+          <li class="nav-item m-2">
+            <a class="nav-link active mt-4" aria-current="page" href="/home">
+              <button type="button" class="btn btn-current rounded-circle" style="width: 50px; height: 50px;" onclick ="location.href='/home'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                  <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"/>
+                </svg>
+              </button>
+            </a>
+          </li>
+          <!-- 공지사항 -->
+          <li class="nav-item m-2">
+            <a class="nav-link mt-4" href="#">
+              <button type="button" class="btn btn-bd-primary rounded-circle" style="width: 50px; height: 50px;" onclick ="location.href='/board'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-megaphone" viewBox="0 0 16 16">
+                  <path d="M13 2.5a1.5 1.5 0 0 1 3 0v11a1.5 1.5 0 0 1-3 0v-.214c-2.162-1.241-4.49-1.843-6.912-2.083l.405 2.712A1 1 0 0 1 5.51 15.1h-.548a1 1 0 0 1-.916-.599l-1.85-3.49a68.14 68.14 0 0 0-.202-.003A2.014 2.014 0 0 1 0 9V7a2.02 2.02 0 0 1 1.992-2.013 74.663 74.663 0 0 0 2.483-.075c3.043-.154 6.148-.849 8.525-2.199V2.5zm1 0v11a.5.5 0 0 0 1 0v-11a.5.5 0 0 0-1 0zm-1 1.35c-2.344 1.205-5.209 1.842-8 2.033v4.233c.18.01.359.022.537.036 2.568.189 5.093.744 7.463 1.993V3.85zm-9 6.215v-4.13a95.09 95.09 0 0 1-1.992.052A1.02 1.02 0 0 0 1 7v2c0 .55.448 1.002 1.006 1.009A60.49 60.49 0 0 1 4 10.065zm-.657.975 1.609 3.037.01.024h.548l-.002-.014-.443-2.966a68.019 68.019 0 0 0-1.722-.082z"/>
+                </svg>
+              </button>
+            </a>
+          </li>
+          <!-- TM 확인 -->
+          <li class="nav-item m-2">
+            <a class="nav-link mt-4" href="#">
+              <button type="button" class="btn btn-bd-primary rounded-circle" style="width: 50px; height: 50px;" onclick ="location.href='/voc'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-telephone" viewBox="0 0 16 16">
+                  <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/>
+                </svg>
+              </button>
+            </a>
+          </li>
+          <!-- 시외공사 -->
+          <li class="nav-item m-2">
+            <a class="nav-link mt-4" href="#">
+              <button type="button" class="btn btn-bd-primary rounded-circle" style="width: 50px; height: 50px;" onclick ="location.href='/construction'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                  <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                </svg>
+              </button>
+            </a>   
+          </li>
+        </ul>
+      </div>
     </div>
     <!-- 메인 콘텐츠 -->
     <div class="col p-4">
@@ -58,7 +108,7 @@
       <table>
         <thead>
           <tr>
-            <th>No.</th><th>TASK TITLE</th><th>TASK OWNER</th><th>Device</th><th>START DATE</th><th>DUE DATE</th><th>Tester</th><th>DURATION</th><th>PROGRESS</th>
+            <th>No.</th><th>Taks Title</th><th>Task Owner</th><th>Device</th><th>Start Date</th><th>Due Date</th><th>Tester</th><th>Duration</th><th>Progress</th>
           </tr>
         </thead>
         <tbody id="wbsTableBody">
@@ -72,9 +122,12 @@
                 {{ item.short_title }}
               </a>
             </td>
-            <td>{{ item.task_owner }}</td><td>{{ item.short_devices }}</td>
-            <td>{{ item.start_date|date:"Y-m-d" }}</td><td>{{ item.due_date|date:"Y-m-d" }}</td>
-            <td>{{ item.tester }}</td><td>{{ item.business_days }}</td>
+            <td>{{ item.task_owner }}</td>
+            <td>{{ item.short_devices }}</td>
+            <td>{{ item.start_date|date:"Y-m-d" }}</td>
+            <td>{{ item.due_date|date:"Y-m-d" }}</td>
+            <td>{{ item.short_testers }}</td>
+            <td>{{ item.business_days }}</td>
             <td><span class="badge-status {% if item.progress == "In progress" %}status-inprogress{% endif %} {% if item.progress == "COMPLETE" %}status-complete{% endif %} {% if item.progress == "Wait" %}status-wait{% endif %} {% if item.progress == "Hold" %}status-hold{% endif %}">{{ item.progress }}</span></td>
           </tr>
           {% empty %}<tr><td colspan="9" class="text-center">등록된 데이터가 없습니다.</td></tr>{% endfor %}
@@ -110,7 +163,7 @@
 
       <!-- 상세 모달 -->
       <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
           <div class="modal-content">
             <div class="modal-header"><h5 class="modal-title" id="detailModalLabel">항목 상세보기</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
             <div class="modal-body">

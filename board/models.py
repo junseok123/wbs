@@ -41,6 +41,11 @@ class WBSItem(models.Model):
         clean = [p.strip() for p in parts if p.strip()]
         # 앞의 두 개만
         return ', '.join(clean[:2])
+    @property
+    def short_testers(self):
+        parts = str(self.tester).split()
+        return ', '.join(parts[:2])
+
     
     @property
     def duration_calc(self):
