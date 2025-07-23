@@ -22,6 +22,7 @@
                 text-decoration: none;
                 color: white;
             }
+            .status-inprogress { color: #ff0707ff; }
 
         </style>
     </head>
@@ -200,42 +201,23 @@
                                         <th class="th8">DURATION</th>
                                         <th class="th9">PROGRESS</th>
                                     </tr>
-                                    {% if df %}
-                                            {% for vocs in df %}
+                                    <tbody>
+                                        {% for item in in_progress_items %}
                                             <tr class="tm_table">
-                                                <td>{{ vocs.receipt }}</td>
-                                                <td>{{ vocs.cust_name }}</td>
-                                                <td>{{ vocs.declaration }}</td>
-                                                <td>{{ vocs.cust_num }}</td>
-                                                <td>{{ vocs.cust_ads }}</td>
-                                                {% csrf_token %}
-                                                    {% if vocs.cust_importance %}
-                                                        <td style="color:red; font-weight:800">긴급</td>
-                                                    {% else %}
-                                                    <td>일반</td>
-                                                    {% endif %}
-                                                {% csrf_token %}
-                                                    {% if vocs.is_tm %}
-                                                        <td style="color:#1EC28F; font-weight:600; font-size:large"><i class="bi bi-check"></i></td>
-                                                    {% else %}
-                                                    <td style="color:red; font-weight:600; font-size:large"><i class="bi bi-x"></i></td>
-                                                    {% endif %}
-                                                {% csrf_token %}
-                                                    {% if vocs.is_answer %}
-                                                        <td style="color:#1EC28F; font-weight:600; font-size:large"><i class="bi bi-check"></i></td>
-                                                    {% else %}
-                                                    <td style="color:red; font-weight:600; font-size:large"><i class="bi bi-x"></i></td>
-                                                    {% endif %}
-                                                    {% csrf_token %}
-                                                    {% if vocs.tm_result %}
-                                                        <td>양호</td>
-                                                    {% else %}
-                                                    <td>불량</td>
-                                                    {% endif %}
-                                                <td>{{ vocs.tm_judge }}</td>
+                                                <td>{{ item.no }}</td>
+                                                <td>{{ item.task_title }}</td>
+                                                <td>{{ item.task_owner }}</td>
+                                                <td>{{ item.short_devices }}</td>
+                                                <td>{{ item.start_date|date:"Y-m-d" }}</td>
+                                                <td>{{ item.due_date|date:"Y-m-d"|default:"-" }}</td>
+                                                <td>{{ item.item.short_testers| default:"-" }}</td>
+                                                <td>{{ item.duration }}</td>
+                                                <td>{{ item.progress }}</td>
                                             </tr>
-                                            {% endfor %}
-                                    {% endif %}
+                                        {% empty %}
+                                            <tr><td colspan="8" class="text-center">진행중인 항목이 없습니다.</td></tr>
+                                        {% endfor %}
+                                    </tbody>
                                 </table>
                             </div>
                         </div>

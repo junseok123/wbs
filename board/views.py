@@ -27,20 +27,43 @@ def wbs_list_view(request):
             print(f"[DEBUG] 실제 DB 건수: {WBSItem.objects.count()}")
             messages.success(request, f'{count}개 항목을 업로드했습니다.')
         return redirect('wbs-board')
+    
 
-    if not WBSItem.objects.exists():
-        csv_path = os.path.join(settings.BASE_DIR, 'templates', '_WBS_.csv')  # 혹은 실제 위치
-        print(f"DEBUG: CSV 경로 → {csv_path}, exists? {os.path.exists(csv_path)}")
-        count = load_wbs_from_csv(csv_path)
-        print(f"[INFO] CSV에서 {count}개 항목 로드")
+    #if not WBSItem.objects.exists():
+    #    csv_path = os.path.join(settings.BASE_DIR, 'templates', '_WBS_.csv')  # 혹은 실제 위치
+    #    print(f"DEBUG: CSV 경로 → {csv_path}, exists? {os.path.exists(csv_path)}")
+    #    count = load_wbs_from_csv(csv_path)
+    #    print(f"[INFO] CSV에서 {count}개 항목 로드")
+    
+    # ——— 검색 & 필터링 ———
+    q        = request.GET.get('q', '').strip()
+    progress = request.GET.get('progress', '').strip()
+    owner    = request.GET.get('owner', '').strip()
 
-    all_items = WBSItem.objects.all().order_by('-no')
+    qs = WBSItem.objects.all()
+    if q:
+        qs = qs.filter(task_title__icontains=q)
+    if progress:
+        qs = qs.filter(progress=progress)
+    if owner:
+        qs = qs.filter(task_owner=owner)
+
+    all_items = qs.order_by('-no')
     paginator = Paginator(all_items, 30)
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
+    # 담당자 셀렉트박스용 distinct list
+    distinct_owners = (
+        WBSItem.objects
+               .values_list('task_owner', flat=True)
+               .distinct()
+               .order_by('task_owner')
+    )
+
     return render(request, 'wbs_input_home.html', {
         'page_obj': page_obj,
-        'wbs_items': page_obj,     # 기존 루프 변수 유지
+        'request':  request,
+        'distinct_owners': distinct_owners,
     })
 
 def wbs_edit(request, no):

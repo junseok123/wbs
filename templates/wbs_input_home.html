@@ -96,11 +96,73 @@
     <div class="col p-4">
       <h3>📋 WBS 항목 관리</h3>
       <div class="d-flex align-items-center mb-3">
-        <button class="btn btn-primary btn-sm me-3" data-bs-toggle="modal" data-bs-target="#addModal">새 항목 추가</button>
-        <form action="{% url 'wbs-board' %}" method="post" enctype="multipart/form-data" class="d-flex align-items-center">
+        <!-- 1) 새 항목 추가 버튼 -->
+        <button
+          class="btn btn-primary btn-sm me-3"
+          data-bs-toggle="modal"
+          data-bs-target="#addModal">
+          새 항목 추가
+        </button>
+
+        <!-- 2) CSV 업로드 폼 -->
+        <form action="{% url 'wbs-board' %}" method="post" enctype="multipart/form-data" class="d-flex align-items-center me-3">
           {% csrf_token %}
-          <input type="file" name="csv_file" accept=".csv" class="form-control form-control-sm w-auto" required>
+          <input type="file" name="csv_file" accept=".csv" class="form-control form-control-sm w-auto" required/>
           <button type="submit" class="btn btn-primary btn-sm ms-2">CSV 업로드</button>
+        </form>
+
+        <!-- 3) 검색 & 필터 폼 -->
+        <form
+          method="get"
+          action="{% url 'wbs-board' %}"
+          class="row row-cols-lg-auto g-2 align-items-center mb-0">
+
+          <!-- 키워드 검색 -->
+          <div class="col">
+            <input
+              type="text"
+              name="q"
+              class="form-control form-control-sm"
+              placeholder="제목 검색"
+              value="{{ request.GET.q|default_if_none:'' }}">
+          </div>
+
+          <!-- 진행 상태 필터 -->
+          <div class="col">
+            <select
+              name="progress"
+              class="form-select form-select-sm">
+              <option value="">전체 상태</option>
+              <option value="In progress" {% if request.GET.progress == "In progress" %} selected{% endif %}>In progress</option>
+              <option value="COMPLETE"   {% if request.GET.progress == "COMPLETE"   %} selected{% endif %}>COMPLETE</option>
+              <option value="Wait"       {% if request.GET.progress == "Wait"       %} selected{% endif %}>Wait</option>
+              <option value="Hold"       {% if request.GET.progress == "Hold"       %} selected{% endif %}>Hold</option>
+            </select>
+          </div>
+
+          <!-- 담당자 필터 -->
+          <div class="col">
+            <select
+              name="owner"
+              class="form-select form-select-sm">
+              <option value="">전체 담당자</option>
+              {% for owner in distinct_owners %}
+                <option
+                     value="{{ owner }}"
+                          {% if request.GET.owner == owner %}selected{% endif %}>
+                  {{ owner }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- 검색 버튼 -->
+          <div class="col">
+            <button type="submit" class="btn btn-primary btn-sm">
+              검색
+            </button>
+          </div>
+
         </form>
       </div>
       {% if messages %}{% for msg in messages %}<div class="alert alert-{{ msg.tags }} mb-2">{{ msg }}</div>{% endfor %}{% endif %}
@@ -135,10 +197,27 @@
       </table>
 
       <div class="pagination-container">
-        {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm me-2">이전</a>{% endif %}
-        <span class="btn btn-secondary btn-sm disabled">페이지 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
-        {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm ms-2">다음</a>{% endif %}
+        {% if page_obj.has_previous %}
+          <a
+            href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.progress %}&progress={{ request.GET.progress }}{% endif %}{% if request.GET.owner %}&owner={{ request.GET.owner }}{% endif %}"
+            class="btn btn-outline-primary btn-sm me-2">
+            이전
+          </a>
+        {% endif %}
+
+        <span class="btn btn-secondary btn-sm disabled">
+          페이지 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+          <a
+            href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.progress %}&progress={{ request.GET.progress }}{% endif %}{% if request.GET.owner %}&owner={{ request.GET.owner }}{% endif %}"
+            class="btn btn-outline-primary btn-sm ms-2">
+            다음
+          </a>
+        {% endif %}
       </div>
+
 
       <!-- 데이터 맵 정의 -->
     <script>
