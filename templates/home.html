@@ -1,3 +1,4 @@
+<!-- home.html-->
 {% load static %}
 
 <!DOCTYPE html>
@@ -23,7 +24,20 @@
                 color: white;
             }
             .status-inprogress { color: #ff0707ff; }
+              /* Today 박스(흰 박스)가 내부 마진 넘침을 잘라내도록 */
+            .board{ overflow:hidden; }
 
+            /* Today 박스 안쪽 기본 패딩(안쪽 여백) 통일 */
+            .board .board-body{ padding:1px; }
+
+            /* 내부 row 양쪽 마진 제거(흰 박스 경계에 딱 붙도록) */
+            .board .row.no-gutter{ margin-left:0; margin-right:0; }
+
+            /* 내부 카드(왼쪽 TOP5, 오른쪽 현황) 공통 스타일 */
+            .board .cardlet{
+                background:#fff; border:1px solid #E9ECEF; border-radius:10px;
+                padding:12px; height:100%;
+            }
         </style>
     </head>
     <body style="min-height: 100vh;">
@@ -88,7 +102,7 @@
                         <!-- TM 확인 -->
                         <li class="nav-item m-2">
                             <a class="nav-link mt-4" href="#">
-                                <button type="button" class="btn btn-bd-primary rounded-circle" style="width: 50px; height: 50px;" onclick ="location.href='/voc'">
+                                <button type="button" class="btn btn-bd-primary rounded-circle" style="width: 50px; height: 50px;" onclick ="location.href='/board'">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-telephone" viewBox="0 0 16 16">
                                         <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/>
                                     </svg>
@@ -122,35 +136,55 @@
                                         <a href="/board"><i class="bi bi-plus-circle" style="font-size: 1.5rem; color: #AABBD0;"></i></a>
                                     </div>
                                 </div>
-                                <hr>
+                            
+                                <!-- Today 보드 본문 -->
                                 <table>
                                     <colgroup>
-                                        <col width=15%>
-                                        <col width=45%>
-                                        <col width=40%>
+                                        <col width="15%">
+                                        <col width="45%">
+                                        <col width="40%">
                                     </colgroup>
                                     <thead>
-                                        {% if data %}
-                                            {% for boards in data %}
-                                                {% if forloop.counter <= 3 %}
-                                                    <tr class="mb-4">
-                                                        
-                                                        <td>{{ boards.engineer.name }}</td>
-                                                        <td>
-                                                            <a href="{% url 'board:content' boards.brd_id %}" style="text-decoration: none; color: black;">
-                                                                {{ boards.brd_title }}
-                                                            </a>
-                                                        </td>
-                                                        <td class="text-end">{{ boards.brd_create }}</td>
-                                                    </tr>
-                                                {% endif %}
-                                            {% endfor %}
-                                        {% else %}
-                                            <h4 class="text-center">존재하지 않습니다.</h4>
-                                        {% endif %}
+                                        <!-- Today 보드 본문: div 레이아웃로 교체 -->
+                                        <div class="board-body">
+                                            <div class="row g-3 no-gutter">
+                                                <!-- 좌: TOP5 -->
+                                                <div class="col-lg-6 px-0 px-lg-2">
+                                                <div class="cardlet h-100">
+                                                    <div class="fw-semibold mb-2" >Task Owner TOP 5</div>
+                                                    {% if owner_top5 %}
+                                                    <ol class="mb-0 ps-3">
+                                                        {% for o in owner_top5 %}
+                                                        <li class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="text-truncate me-2">{{ o.task_owner }}</span>
+                                                            <span class="badge text-bg-secondary">{{ o.cnt }}</span>
+                                                        </li>
+                                                        {% endfor %}
+                                                    </ol>
+                                                    {% else %}
+                                                    <div class="text-muted">데이터가 없습니다.</div>
+                                                    {% endif %}
+                                                </div>
+                                                </div>
+
+                                                <!-- 우: WBS 현황 -->
+                                                <div class="col-lg-6 px-0 px-lg-2">
+                                                <div class="cardlet h-100">
+                                                    <div class="fw-semibold mb-2">WBS 현황</div>
+                                                    <div class="mb-2">총 개수 : <span class="fw-bold">{{ wbs_total }}</span></div>
+                                                    <ul class="mb-0">
+                                                    <li>In progress : <span class="fw-bold">{{ progress_counts.in_progress }}</span></li>
+                                                    <li>COMPLETE : <span class="fw-bold">{{ progress_counts.complete }}</span></li>
+                                                    <li>Wait : <span class="fw-bold">{{ progress_counts.wait }}</span></li>
+                                                    <li>Hold : <span class="fw-bold">{{ progress_counts.hold }}</span></li>
+                                                    </ul>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </thead>
                                 </table>
-                                
+                            
                             </div>
                             <div class="construction">
                                 <div class="row">
@@ -185,7 +219,7 @@
                                     <i class="bi bi-display" style="font-size: 1.5rem; color: #AABBD0;"></i> In Progress
                                 </p>
                                 <div class="col text-end me-4 mt-2">
-                                    <a href="/voc"><i class="bi bi-plus-circle" style="font-size: 1.5rem; color: #AABBD0;"></i></a>
+                                    <a href="/board"><i class="bi bi-plus-circle" style="font-size: 1.5rem; color: #AABBD0;"></i></a>
                                 </div>
                             </div>
                             <div class="voc_content">
@@ -210,7 +244,7 @@
                                                 <td>{{ item.short_devices }}</td>
                                                 <td>{{ item.start_date|date:"Y-m-d" }}</td>
                                                 <td>{{ item.due_date|date:"Y-m-d"|default:"-" }}</td>
-                                                <td>{{ item.item.short_testers| default:"-" }}</td>
+                                                <td>{{ item.short_testers| default:"-" }}</td>
                                                 <td>{{ item.duration }}</td>
                                                 <td>{{ item.progress }}</td>
                                             </tr>
