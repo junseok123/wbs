@@ -99,3 +99,12 @@ def wbs_create_api(request):
     
     # 유효성 검사 실패 시
     return JsonResponse({'status':'error','errors':form.errors}, status=400)
+
+@require_POST
+def wbs_delete_api(request, no: int):
+    item = get_object_or_404(WBSItem, no=no)
+    try:
+        item.delete()
+        return JsonResponse({"status": "success"})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=400)

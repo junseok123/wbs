@@ -61,33 +61,23 @@
           </li>
           <!-- 공지사항 -->
           <li class="nav-item m-2">
-            <a class="nav-link mt-4" href="#">
-              <button type="button" class="btn btn-bd-primary rounded-circle" style="width: 50px; height: 50px;" onclick ="location.href='/board'">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-megaphone" viewBox="0 0 16 16">
-                  <path d="M13 2.5a1.5 1.5 0 0 1 3 0v11a1.5 1.5 0 0 1-3 0v-.214c-2.162-1.241-4.49-1.843-6.912-2.083l.405 2.712A1 1 0 0 1 5.51 15.1h-.548a1 1 0 0 1-.916-.599l-1.85-3.49a68.14 68.14 0 0 0-.202-.003A2.014 2.014 0 0 1 0 9V7a2.02 2.02 0 0 1 1.992-2.013 74.663 74.663 0 0 0 2.483-.075c3.043-.154 6.148-.849 8.525-2.199V2.5zm1 0v11a.5.5 0 0 0 1 0v-11a.5.5 0 0 0-1 0zm-1 1.35c-2.344 1.205-5.209 1.842-8 2.033v4.233c.18.01.359.022.537.036 2.568.189 5.093.744 7.463 1.993V3.85zm-9 6.215v-4.13a95.09 95.09 0 0 1-1.992.052A1.02 1.02 0 0 0 1 7v2c0 .55.448 1.002 1.006 1.009A60.49 60.49 0 0 1 4 10.065zm-.657.975 1.609 3.037.01.024h.548l-.002-.014-.443-2.966a68.019 68.019 0 0 0-1.722-.082z"/>
-                </svg>
-              </button>
-            </a>
+              <a class="nav-link mt-4" href="#">
+                  <button type="button" class="btn btn-bd-primary rounded-circle" 
+                        style="width: 50px; height: 50px;" 
+                        onclick="location.href='/board'">
+                      <i class="bi bi-file-text" style="font-size:24px;"></i>
+                  </button>
+              </a>
           </li>
           <!-- TM 확인 -->
           <li class="nav-item m-2">
             <a class="nav-link mt-4" href="#">
-              <button type="button" class="btn btn-bd-primary rounded-circle" style="width: 50px; height: 50px;" onclick ="location.href='/voc'">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-telephone" viewBox="0 0 16 16">
-                  <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/>
-                </svg>
+              <button type="button" class="btn btn-bd-primary rounded-circle" 
+                      style="width: 50px; height: 50px;" 
+                      onclick="location.href='/board'">
+                <i class="bi bi-phone" style="font-size:24px;"></i>
               </button>
             </a>
-          </li>
-          <!-- 시외공사 -->
-          <li class="nav-item m-2">
-            <a class="nav-link mt-4" href="#">
-              <button type="button" class="btn btn-bd-primary rounded-circle" style="width: 50px; height: 50px;" onclick ="location.href='/construction'">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
-                  <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
-                </svg>
-              </button>
-            </a>   
           </li>
         </ul>
       </div>
@@ -333,6 +323,7 @@
               </div>
             </div>
             <div class="modal-footer">
+              <button id="delete-btn" type="button" class="btn btn-danger btn-sm me-auto">삭제</button>
               <button id="edit-toggle-btn" type="button" class="btn btn-primary btn-sm">수정</button>
               <button id="save-btn" type="button" class="btn btn-success btn-sm" style="display:none;">저장</button>
               <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">닫기</button>
@@ -437,6 +428,7 @@
       const no = event.relatedTarget.getAttribute('data-no');
       const data = wbsData[no] || {};
       // Read 모드 채우기
+      document.getElementById('delete-btn').dataset.no = no;
       document.getElementById('detail-no').textContent      = data.no;
       document.getElementById('detail-title').textContent   = data.title;
       document.getElementById('detail-content').innerHTML   = (data.content||'').replace(/\r?\n/g,'<br>');
@@ -505,7 +497,40 @@
         }
       });
     });
+    
 
+  </script>
+  <script>
+  // 없으면 추가
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+
+  document.getElementById('delete-btn').addEventListener('click', function () {
+    const no = this.dataset.no;
+    if (!no) return;
+    if (!confirm('정말 삭제하시겠습니까?')) return;
+
+    fetch(`/board/api/delete/${no}/`, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': getCookie('csrftoken') },
+    })
+    .then(res => res.json())
+    .then(json => {
+      if (json.status === 'success') {
+        // 모달 닫고 새로고침(간단/안전)
+        bootstrap.Modal.getInstance(document.getElementById('detailModal')).hide();
+        location.reload();
+        // 또는 DOM만 지우고 싶으면:
+        // document.querySelector(`a[data-no="${no}"]`)?.closest('tr')?.remove();
+      } else {
+        alert('삭제 실패: ' + (json.message || '알 수 없는 오류'));
+      }
+    })
+    .catch(err => alert('삭제 중 오류가 발생했습니다: ' + err));
+  });
   </script>
 </body>
 </html>
