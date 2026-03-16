@@ -1,222 +1,247 @@
-<!-- home.html-->
+<!-- home.html -->
 {% load static %}
 
 <!DOCTYPE html>
 <html style="min-height: 100vh;">
-    <head lang="ko">
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-        
-        <!-- favicon -->
-        <link rel="shortcut icon" href="{% static 'favicon/favicon_square.png' %}"/>
+<head lang="ko">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- bootstrap 아이콘 -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-        <link rel="stylesheet" href="{% static 'home/home.css' %}">
-        <title>S.LSI : 홈</title>
-        
-        <style>
-            a {
-                text-decoration: none;
-                color: white;
-            }
-            .status-inprogress { color: #ff0707ff; }
-              /* Today 박스(흰 박스)가 내부 마진 넘침을 잘라내도록 */
-            .board{ overflow:hidden; }
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <!-- Bootstrap JS (bundle: Popper 포함) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <!-- Popper.js (Bootstrap과 별도 사용 시) -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
 
-            /* Today 박스 안쪽 기본 패딩(안쪽 여백) 통일 */
-            .board .board-body{ padding:1px; }
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{% static 'favicon/favicon_square.png' %}"/>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- 홈 전용 CSS -->
+    <link rel="stylesheet" href="{% static 'home/home.css' %}">
 
-            /* 내부 row 양쪽 마진 제거(흰 박스 경계에 딱 붙도록) */
-            .board .row.no-gutter{ margin-left:0; margin-right:0; }
+    <title>S.LSI : 홈</title>
 
-            /* 내부 카드(왼쪽 TOP5, 오른쪽 현황) 공통 스타일 */
-            .board .cardlet{
-                background:#fff; border:1px solid #E9ECEF; border-radius:10px;
-                padding:12px; height:100%;
-            }
-        </style>
-    </head>
-    <body style="min-height: 100vh;">
+    <style>
+        /* 링크 기본 스타일 초기화 */
+        a { text-decoration: none; color: white; }
 
-        <header>
-            <!-- 상단바 -->
-            <nav class="navbar navbar-expand-lg  border-bottom">
-                <div class="container-fluid row">
-                    <div class="col-2 row">
-                        {% comment %} 로고 {% endcomment %}
-                        <div>
-                            <a href="/"><img src="{% static 'privacy/logo.png' %}" style="width: 50px; height: auto;" class="me-5" id="logo"></a>
-                        </div>
-                    </div>
-                    <div class="col">
-                        {% if request.user.is_authenticated %}
-                            <h5 class="m-0"><p style="display: inline;">{{ request.user.name }}</p> 님, 환영합니다.</h5>    
-                        {% else %}
-                            <p>User is not logged in</p>
-                        {% endif %}
-                    </div>
-                    <div class="col-auto">
-                        <div class="collapse navbar-collapse" id="navbarNav">
-                            <ul class="navbar-nav">
-                                <li class="nav-item">
-                                    <a class="nav-link me-2" href="users/logout"><i class="bi bi-box-arrow-right"></i></a>
-                                </li>
-                            </ul>
-                        </div>
+        /* In progress 상태 텍스트 색상 */
+        .status-inprogress { color: #ff0707ff; }
+
+        /* Today 보드: 내부 마진 넘침 방지 */
+        .board { overflow: hidden; }
+
+        /* Today 보드 본문 패딩 통일 */
+        .board .board-body { padding: 1px; }
+
+        /* 내부 row 양쪽 마진 제거 (흰 박스 경계에 딱 붙도록) */
+        .board .row.no-gutter { margin-left: 0; margin-right: 0; }
+
+        /* 내부 카드 (TOP5 / WBS 현황) 공통 스타일 */
+        .board .cardlet {
+            background: #fff; border: 1px solid #E9ECEF;
+            border-radius: 10px; padding: 12px; height: 100%;
+        }
+    </style>
+</head>
+<body style="min-height: 100vh;">
+
+    <!-- ===================== 상단 네비게이션 바 ===================== -->
+    <header>
+        <nav class="navbar navbar-expand-lg border-bottom">
+            <div class="container-fluid row">
+
+                <!-- 로고 -->
+                <div class="col-2 row">
+                    <div>
+                        <a href="/"><img src="{% static 'privacy/logo.png' %}" style="width: 50px; height: auto;" class="me-5" id="logo"></a>
                     </div>
                 </div>
-            </nav>
 
-        </header>
-        <div class="row container-fluid p-0 m-0" style="min-height: 100vh;">
-            <!-- 사이드바 -->
-            <div class="col-md-1 border-end text-center">
-
-                <!-- 아이콘 -->
-                <div>
-                    <ul class="nav flex-column">
-                        <!-- 홈 -->
-                        <li class="nav-item m-2">
-                            <a class="nav-link active mt-4" aria-current="page" href="/home">
-                                <button type="button" class="btn btn-current rounded-circle" style="width: 50px; height: 50px;" onclick ="location.href='/home'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
-                                        <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"/>
-                                    </svg>
-                                </button>
-                            </a>
-                        </li>
-                        <!-- 공지사항 -->
-                        <li class="nav-item m-2">
-                            <a class="nav-link mt-4" href="#">
-                                <button type="button" class="btn btn-bd-primary rounded-circle" 
-                                        style="width: 50px; height: 50px;" 
-                                        onclick="location.href='/board'">
-                                    <i class="bi bi-file-text" style="font-size:24px;"></i>
-                                </button>
-                            </a>
-                        </li>
-                        <!-- TM 확인 -->
-                        <li class="nav-item m-2">
-                            <a class="nav-link mt-4" href="#">
-                            <button type="button" class="btn btn-bd-primary rounded-circle" 
-                                    style="width: 50px; height: 50px;" 
-                                    onclick="location.href='/board'">
-                                <i class="bi bi-phone" style="font-size:24px;"></i>
-                            </button>
-                            </a>
-                        </li>
-                      </ul>
+                <!-- 로그인 사용자 환영 메시지 -->
+                <div class="col">
+                    {% if request.user.is_authenticated %}
+                        <h5 class="m-0"><p style="display: inline;">{{ request.user.name }}</p> 님, 환영합니다.</h5>
+                    {% else %}
+                        <p>User is not logged in</p>
+                    {% endif %}
                 </div>
+
+                <!-- 로그아웃 버튼 -->
+                <div class="col-auto">
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link me-2" href="users/logout">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
             </div>
-            <div class="col p-0">
-                <!-- 메인 컨텐츠 -->
-                <div class="pb-5" style="background-color:#F1F2F6">
-                    <div class="content">
-                        <div class="wrap">
-                            <div class="board">
-                                <div class="row">
-                                    <p class="text col">
-                                        <i class="bi bi-journal-check" style="font-size: 1.5rem; color: #AABBD0;"></i> Today
-                                    </p>
-                                    <div class="col text-end me-4 mt-2">
-                                        <a href="/board"><i class="bi bi-plus-circle" style="font-size: 1.5rem; color: #AABBD0;"></i></a>
-                                    </div>
-                                </div>
-                            
-                                <!-- Today 보드 본문 -->
-                                <table>
-                                    <colgroup>
-                                        <col width="15%">
-                                        <col width="45%">
-                                        <col width="40%">
-                                    </colgroup>
-                                    <thead>
-                                        <!-- Today 보드 본문: div 레이아웃로 교체 -->
-                                        <div class="board-body">
-                                            <div class="row g-3 no-gutter">
-                                                <!-- 좌: TOP5 -->
-                                                <div class="col-lg-6 px-0 px-lg-2">
-                                                <div class="cardlet h-100">
-                                                    <div class="fw-semibold mb-2" >Task Owner List</div>
-                                                    {% if owner_top5 %}
-                                                    <ol class="mb-0 ps-3">
-                                                        {% for o in owner_top5 %}
-                                                        <li class="d-flex justify-content-between align-items-center mb-2">
-                                                            <span class="text-truncate me-2">{{ o.task_owner }}</span>
-                                                            <span class="badge text-bg-secondary">{{ o.cnt }}</span>
-                                                        </li>
-                                                        {% endfor %}
-                                                    </ol>
-                                                    {% else %}
-                                                    <div class="text-muted">데이터가 없습니다.</div>
-                                                    {% endif %}
-                                                </div>
-                                                </div>
+        </nav>
+    </header>
+    <!-- ===================== // 상단 네비게이션 바 ===================== -->
 
-                                                <!-- 우: WBS 현황 -->
-                                                <div class="col-lg-6 px-0 px-lg-2">
-                                                <div class="cardlet h-100">
-                                                    <div class="fw-semibold mb-2">WBS 현황</div>
-                                                    <div class="mb-2">총 개수 : <span class="fw-bold">{{ wbs_total }}</span></div>
-                                                    <ul class="mb-0">
-                                                    <li>In progress : <span class="fw-bold">{{ progress_counts.in_progress }}</span></li>
-                                                    <li>COMPLETE : <span class="fw-bold">{{ progress_counts.complete }}</span></li>
-                                                    <li>Wait : <span class="fw-bold">{{ progress_counts.wait }}</span></li>
-                                                    <li>Hold : <span class="fw-bold">{{ progress_counts.hold }}</span></li>
-                                                    </ul>
-                                                </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </thead>
-                                </table>
-                            
-                            </div>
-                            <div class="construction">
-                                <div class="row">
-                                    <p class="text col">
-                                        <i class="bi bi-cone-striped" style="font-size: 1.5rem; color: #AABBD0;"></i> Priority High
-                                    </p>
-                                    <div class="col text-end me-4 mt-2">
-                                        <a href="/construction" style="color: black;"><i class="bi bi-plus-circle" style="font-size: 1.5rem; color: #AABBD0;"></i></a>
-                                    </div>
-                                </div>
-                                <hr>
-                                <table>
-                                    {% if cons %}
-                                            {% for con in cons %}
-                                                {% if forloop.counter <= 3 %}
-                                                    <tr class="mb-4">
-                                                        <td>{{ con.receipt|date:'Y년 m월 d일' }}</td>
-                                                        <td>{{ con.cstr_location }}</td>
-                                                        <td class="text-end">{{ con.cstr_company }}</td>
-                                                    </tr>
-                                                {% endif %}
-                                            {% endfor %}
-                                        {% else %}
-                                            <h4 class="text-center">존재하지 않습니다.</h4>
-                                        {% endif %}
-                                </table>
-                            </div>
-                        </div>
-                        <div class="tm_check">
+    <div class="row container-fluid p-0 m-0" style="min-height: 100vh;">
+
+        <!-- ===================== 사이드바 ===================== -->
+        <div class="col-md-1 border-end text-center">
+            <ul class="nav flex-column">
+
+                <!-- 홈 버튼 -->
+                <li class="nav-item m-2">
+                    <a class="nav-link active mt-4" aria-current="page" href="/home">
+                        <button type="button" class="btn btn-current rounded-circle" style="width: 50px; height: 50px;" onclick="location.href='/home'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                                <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"/>
+                            </svg>
+                        </button>
+                    </a>
+                </li>
+
+                <!-- 공지사항 버튼 -->
+                <li class="nav-item m-2">
+                    <a class="nav-link mt-4" href="#">
+                        <button type="button" class="btn btn-bd-primary rounded-circle"
+                                style="width: 50px; height: 50px;"
+                                onclick="location.href='/board'">
+                            <i class="bi bi-file-text" style="font-size:24px;"></i>
+                        </button>
+                    </a>
+                </li>
+
+                <!-- TM 확인 버튼 -->
+                <li class="nav-item m-2">
+                    <a class="nav-link mt-4" href="#">
+                        <button type="button" class="btn btn-bd-primary rounded-circle"
+                                style="width: 50px; height: 50px;"
+                                onclick="location.href='/board'">
+                            <i class="bi bi-phone" style="font-size:24px;"></i>
+                        </button>
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+        <!-- ===================== // 사이드바 ===================== -->
+
+        <!-- ===================== 메인 콘텐츠 ===================== -->
+        <div class="col p-0">
+            <div class="pb-5" style="background-color:#F1F2F6">
+                <div class="content">
+                    <div class="wrap">
+
+                        <!-- ——— Today 보드 (Task Owner TOP5 + WBS 현황) ——— -->
+                        <div class="board">
                             <div class="row">
-                                <p class="text_cus col">
-                                    <i class="bi bi-display" style="font-size: 1.5rem; color: #AABBD0;"></i> In Progress
+                                <!-- 섹션 제목 -->
+                                <p class="text col">
+                                    <i class="bi bi-journal-check" style="font-size: 1.5rem; color: #AABBD0;"></i> Today
                                 </p>
+                                <!-- WBS 보드 바로가기 링크 -->
                                 <div class="col text-end me-4 mt-2">
                                     <a href="/board"><i class="bi bi-plus-circle" style="font-size: 1.5rem; color: #AABBD0;"></i></a>
                                 </div>
                             </div>
-                            <div class="voc_content">
-                                <table class="voc_table">      
+
+                            <div class="board-body">
+                                <div class="row g-3 no-gutter">
+
+                                    <!-- 좌: Task Owner TOP5 목록 -->
+                                    <div class="col-lg-6 px-0 px-lg-2">
+                                        <div class="cardlet h-100">
+                                            <div class="fw-semibold mb-2">Task Owner List</div>
+                                            {% if owner_top5 %}
+                                            <ol class="mb-0 ps-3">
+                                                {% for o in owner_top5 %}
+                                                <li class="d-flex justify-content-between align-items-center mb-2">
+                                                    <span class="text-truncate me-2">{{ o.task_owner }}</span>
+                                                    <!-- 담당 항목 수 배지 -->
+                                                    <span class="badge text-bg-secondary">{{ o.cnt }}</span>
+                                                </li>
+                                                {% endfor %}
+                                            </ol>
+                                            {% else %}
+                                            <div class="text-muted">데이터가 없습니다.</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <!-- 우: WBS 진행 상태 현황 -->
+                                    <div class="col-lg-6 px-0 px-lg-2">
+                                        <div class="cardlet h-100">
+                                            <div class="fw-semibold mb-2">WBS 현황</div>
+                                            <div class="mb-2">총 개수 : <span class="fw-bold">{{ wbs_total }}</span></div>
+                                            <ul class="mb-0">
+                                                <li>In progress : <span class="fw-bold">{{ progress_counts.in_progress }}</span></li>
+                                                <li>COMPLETE    : <span class="fw-bold">{{ progress_counts.complete }}</span></li>
+                                                <li>Wait        : <span class="fw-bold">{{ progress_counts.wait }}</span></li>
+                                                <li>Hold        : <span class="fw-bold">{{ progress_counts.hold }}</span></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ——— // Today 보드 ——— -->
+
+                        <!-- ——— Priority High 섹션 ——— -->
+                        <div class="construction">
+                            <div class="row">
+                                <p class="text col">
+                                    <i class="bi bi-cone-striped" style="font-size: 1.5rem; color: #AABBD0;"></i> Priority High
+                                </p>
+                                <div class="col text-end me-4 mt-2">
+                                    <a href="/construction" style="color: black;">
+                                        <i class="bi bi-plus-circle" style="font-size: 1.5rem; color: #AABBD0;"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <hr>
+                            <table>
+                                {% if cons %}
+                                    {% for con in cons %}
+                                        {% if forloop.counter <= 3 %} {# 최대 3건만 표시 #}
+                                        <tr class="mb-4">
+                                            <td>{{ con.receipt|date:'Y년 m월 d일' }}</td>
+                                            <td>{{ con.cstr_location }}</td>
+                                            <td class="text-end">{{ con.cstr_company }}</td>
+                                        </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <h4 class="text-center">존재하지 않습니다.</h4>
+                                {% endif %}
+                            </table>
+                        </div>
+                        <!-- ——— // Priority High 섹션 ——— -->
+
+                    </div>
+
+                    <!-- ——— In Progress 항목 테이블 ——— -->
+                    <div class="tm_check">
+                        <div class="row">
+                            <p class="text_cus col">
+                                <i class="bi bi-display" style="font-size: 1.5rem; color: #AABBD0;"></i> In Progress
+                            </p>
+                            <!-- WBS 보드 바로가기 -->
+                            <div class="col text-end me-4 mt-2">
+                                <a href="/board"><i class="bi bi-plus-circle" style="font-size: 1.5rem; color: #AABBD0;"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="voc_content">
+                            <table class="voc_table">
+                                <thead>
                                     <tr>
                                         <th class="th1">No.</th>
-                                        <th class="th2">Taks Title</th>
+                                        <th class="th2">Task Title</th>
                                         <th class="th3">Task Owner</th>
                                         <th class="th4">Device</th>
                                         <th class="th5">Start Date</th>
@@ -225,31 +250,35 @@
                                         <th class="th8">Duration</th>
                                         <th class="th9">Progress</th>
                                     </tr>
-                                    <tbody>
-                                        {% for item in in_progress_items %}
-                                            <tr class="tm_table">
-                                                <td>{{ item.no }}</td>
-                                                <td>{{ item.task_title }}</td>
-                                                <td>{{ item.task_owner }}</td>
-                                                <td>{{ item.short_devices }}</td>
-                                                <td>{{ item.start_date|date:"Y-m-d" }}</td>
-                                                <td>{{ item.due_date|date:"Y-m-d"|default:"-" }}</td>
-                                                <td>{{ item.short_testers| default:"-" }}</td>
-                                                <td>{{ item.duration }}</td>
-                                                <td>{{ item.progress }}</td>
-                                            </tr>
-                                        {% empty %}
-                                            <tr><td colspan="8" class="text-center">진행중인 항목이 없습니다.</td></tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
+                                </thead>
+                                <tbody>
+                                    {% for item in in_progress_items %}
+                                    <tr class="tm_table">
+                                        <td>{{ item.no }}</td>
+                                        <td>{{ item.task_title }}</td>
+                                        <td>{{ item.task_owner }}</td>
+                                        <td>{{ item.short_devices }}</td>
+                                        <td>{{ item.start_date|date:"Y-m-d" }}</td>
+                                        <td>{{ item.due_date|date:"Y-m-d"|default:"-" }}</td>
+                                        <td>{{ item.short_testers|default:"-" }}</td>
+                                        <td>{{ item.duration }}</td>
+                                        <td>{{ item.progress }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <!-- 진행 중인 항목 없을 때 안내 행 -->
+                                    <tr><td colspan="9" class="text-center">진행중인 항목이 없습니다.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                </div>
+                    <!-- ——— // In Progress 항목 테이블 ——— -->
 
-                
+                </div>
             </div>
         </div>
-    </body>
+        <!-- ===================== // 메인 콘텐츠 ===================== -->
+
+    </div>
+</body>
 </html>
