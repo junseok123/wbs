@@ -3,164 +3,160 @@
 <head>
   <meta charset="UTF-8" />
   <title>WBS 입력 with Sidebar</title>
+  <!-- Bootstrap CSS & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <!-- Bootstrap JS (bundle: Popper 포함) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <style>
+    /* ——— 테이블 기본 스타일 ——— */
     table { width: 100%; border-collapse: collapse; margin-top: 30px; background-color: white; }
     th, td { border: 1px solid #ccc; padding: 4.5px; text-align: center; }
     th { background-color: #d4e4ff; }
     input, select, textarea { width: 100%; padding: 4px; font-size: 13px; }
+
+    /* ——— 버튼 커스텀 색상 ——— */
     .btn-bd-primary { --bs-btn-font-weight: 600; --bs-btn-color: white; --bs-btn-bg: #304070; --bs-btn-border-color: #304070; }
-    .btn-current { --bs-btn-font-weight: 600; --bs-btn-color: white; --bs-btn-bg: #8ec0e4; --bs-btn-border-color: #8ec0e4; }
+    .btn-current    { --bs-btn-font-weight: 600; --bs-btn-color: white; --bs-btn-bg: #8ec0e4; --bs-btn-border-color: #8ec0e4; }
+
+    /* ——— 페이지네이션 ——— */
     .pagination-container { margin-top: 1rem; display: flex; justify-content: center; }
-    .badge-status { display: inline-block; padding: .25em .5em; font-size: .875rem; font-weight: 600; border-radius: .25rem; }
-    .status-inprogress { color: #ff0707ff; } .status-complete { color: #0D6EFD; } .status-wait { color: #FFC107; } .status-hold { color: #000; }
-    /* 모달 상세보기 왼쪽 정렬 */
-    .modal-body table th, .modal-body table td {
-      text-align: left !important;
-    }
-    /* th 줄바꿈 방지 */
-    .modal-body table th {
-      white-space: nowrap;
-    }
 
-    /* 기존 줄 */
-    .modal-body table td {
-      text-align: left !important;
-    }
-    .modal-content {
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    }
+    /* ——— 진행 상태 배지 색상 ——— */
+    .badge-status      { display: inline-block; padding: .25em .5em; font-size: .875rem; font-weight: 600; border-radius: .25rem; }
+    .status-inprogress { color: #ff0707ff; }
+    .status-complete   { color: #0D6EFD;   }
+    .status-wait       { color: #FFC107;   }
+    .status-hold       { color: #000;      }
 
-    /* 본문 영역만 스크롤 */
-    .modal-body {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    }
+    /* ——— 모달 내부 테이블: 왼쪽 정렬 & th 줄바꿈 방지 ——— */
+    .modal-body table th, .modal-body table td { text-align: left !important; }
+    .modal-body table th { white-space: nowrap; }
+    .modal-body table td { text-align: left !important; }
+
+    /* ——— 모달 높이 제한 & 본문 스크롤 ——— */
+    .modal-content { max-height: 90vh; display: flex; flex-direction: column; }
+    .modal-body    { flex: 1 1 auto; overflow-y: auto; }
   </style>
 </head>
 <body>
   <div class="row container-fluid p-0 m-0" style="min-height: 100vh;">
-            <!-- 사이드바 -->
+
+    <!-- ===================== 사이드바 ===================== -->
     <div class="col-md-1 border-end text-center">
-                <!-- 아이콘 -->
       <div>
         <ul class="nav flex-column">
-                        <!-- 홈 -->
+
+          <!-- 홈 버튼 -->
           <li class="nav-item m-2">
             <a class="nav-link active mt-4" aria-current="page" href="/home">
-              <button type="button" class="btn btn-current rounded-circle" style="width: 50px; height: 50px;" onclick ="location.href='/home'">
+              <button type="button" class="btn btn-current rounded-circle" style="width: 50px; height: 50px;" onclick="location.href='/home'">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
                   <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"/>
                 </svg>
               </button>
             </a>
           </li>
-          <!-- 공지사항 -->
-          <li class="nav-item m-2">
-              <a class="nav-link mt-4" href="#">
-                  <button type="button" class="btn btn-bd-primary rounded-circle" 
-                        style="width: 50px; height: 50px;" 
-                        onclick="location.href='/board'">
-                      <i class="bi bi-file-text" style="font-size:24px;"></i>
-                  </button>
-              </a>
-          </li>
-          <!-- TM 확인 -->
+
+          <!-- 공지사항 버튼 -->
           <li class="nav-item m-2">
             <a class="nav-link mt-4" href="#">
-              <button type="button" class="btn btn-bd-primary rounded-circle" 
-                      style="width: 50px; height: 50px;" 
+              <button type="button" class="btn btn-bd-primary rounded-circle"
+                      style="width: 50px; height: 50px;"
+                      onclick="location.href='/board'">
+                <i class="bi bi-file-text" style="font-size:24px;"></i>
+              </button>
+            </a>
+          </li>
+
+          <!-- TM 확인 버튼 -->
+          <li class="nav-item m-2">
+            <a class="nav-link mt-4" href="#">
+              <button type="button" class="btn btn-bd-primary rounded-circle"
+                      style="width: 50px; height: 50px;"
                       onclick="location.href='/board'">
                 <i class="bi bi-phone" style="font-size:24px;"></i>
               </button>
             </a>
           </li>
+
         </ul>
       </div>
     </div>
-    <!-- 메인 콘텐츠 -->
+    <!-- ===================== // 사이드바 ===================== -->
+
+    <!-- ===================== 메인 콘텐츠 ===================== -->
     <div class="col p-4">
       <h3>📋 WBS 항목 관리</h3>
+
       <div class="d-flex align-items-center mb-3">
-        <!-- 1) 새 항목 추가 버튼 -->
-        <button
-          class="btn btn-primary btn-sm me-3"
-          data-bs-toggle="modal"
-          data-bs-target="#addModal">
+        <!-- 새 항목 추가 버튼 → addModal 트리거 -->
+        <button class="btn btn-primary btn-sm me-3"
+                data-bs-toggle="modal" data-bs-target="#addModal">
           새 항목 추가
         </button>
 
-        <!-- 2) CSV 업로드 폼 -->
+        <!-- CSV 업로드 폼 -->
         <form action="{% url 'wbs-board' %}" method="post" enctype="multipart/form-data" class="d-flex align-items-center me-3">
           {% csrf_token %}
           <input type="file" name="csv_file" accept=".csv" class="form-control form-control-sm w-auto" required/>
           <button type="submit" class="btn btn-primary btn-sm ms-2">CSV 업로드</button>
         </form>
 
-        <!-- 3) 검색 & 필터 폼 -->
-        <form
-          method="get"
-          action="{% url 'wbs-board' %}"
-          class="row row-cols-lg-auto g-2 align-items-center mb-0">
+        <!-- 검색 & 필터 폼 (GET 방식) -->
+        <form method="get" action="{% url 'wbs-board' %}" class="row row-cols-lg-auto g-2 align-items-center mb-0">
 
-          <!-- 키워드 검색 -->
+          <!-- 제목 키워드 검색 -->
           <div class="col">
-            <input
-              type="text"
-              name="q"
-              class="form-control form-control-sm"
-              placeholder="제목 검색"
-              value="{{ request.GET.q|default_if_none:'' }}">
+            <input type="text" name="q" class="form-control form-control-sm"
+                   placeholder="제목 검색"
+                   value="{{ request.GET.q|default_if_none:'' }}">
           </div>
 
           <!-- 진행 상태 필터 -->
           <div class="col">
-            <select
-              name="progress"
-              class="form-select form-select-sm">
+            <select name="progress" class="form-select form-select-sm">
               <option value="">전체 상태</option>
-              <option value="In progress" {% if request.GET.progress == "In progress" %} selected{% endif %}>In progress</option>
-              <option value="COMPLETE"   {% if request.GET.progress == "COMPLETE"   %} selected{% endif %}>COMPLETE</option>
-              <option value="Wait"       {% if request.GET.progress == "Wait"       %} selected{% endif %}>Wait</option>
-              <option value="Hold"       {% if request.GET.progress == "Hold"       %} selected{% endif %}>Hold</option>
+              <option value="In progress" {% if request.GET.progress == "In progress" %}selected{% endif %}>In progress</option>
+              <option value="COMPLETE"    {% if request.GET.progress == "COMPLETE"    %}selected{% endif %}>COMPLETE</option>
+              <option value="Wait"        {% if request.GET.progress == "Wait"        %}selected{% endif %}>Wait</option>
+              <option value="Hold"        {% if request.GET.progress == "Hold"        %}selected{% endif %}>Hold</option>
             </select>
           </div>
 
-          <!-- 담당자 필터 -->
+          <!-- 담당자 필터 (DB distinct 목록) -->
           <div class="col">
-            <select
-              name="owner"
-              class="form-select form-select-sm">
+            <select name="owner" class="form-select form-select-sm">
               <option value="">전체 담당자</option>
               {% for owner in distinct_owners %}
-                <option
-                     value="{{ owner }}"
-                          {% if request.GET.owner == owner %}selected{% endif %}>
+                <option value="{{ owner }}" {% if request.GET.owner == owner %}selected{% endif %}>
                   {{ owner }}
                 </option>
               {% endfor %}
             </select>
           </div>
 
-          <!-- 검색 버튼 -->
+          <!-- 검색 실행 버튼 -->
           <div class="col">
-            <button type="submit" class="btn btn-primary btn-sm">
-              검색
-            </button>
+            <button type="submit" class="btn btn-primary btn-sm">검색</button>
           </div>
 
         </form>
       </div>
-      {% if messages %}{% for msg in messages %}<div class="alert alert-{{ msg.tags }} mb-2">{{ msg }}</div>{% endfor %}{% endif %}
 
+      <!-- Django messages 알림 (업로드 성공/실패 등) -->
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="alert alert-{{ msg.tags }} mb-2">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <!-- ——— WBS 목록 테이블 ——— -->
       <table>
         <thead>
           <tr>
-            <th>No.</th><th>Taks Title</th><th>Task Owner</th><th>Device</th><th>Start Date</th><th>Due Date</th><th>Tester</th><th>Duration</th><th>Progress</th>
+            <th>No.</th><th>Task Title</th><th>Task Owner</th><th>Device</th>
+            <th>Start Date</th><th>Due Date</th><th>Tester</th><th>Duration</th><th>Progress</th>
           </tr>
         </thead>
         <tbody id="wbsTableBody">
@@ -168,6 +164,7 @@
           <tr>
             <td>{{ item.no }}</td>
             <td>
+              <!-- 제목 클릭 시 detailModal 열기 (data-no로 항목 식별) -->
               <a href="#" class="text-decoration-none"
                  data-bs-toggle="modal" data-bs-target="#detailModal"
                  data-no="{{ item.no }}">
@@ -175,74 +172,85 @@
               </a>
             </td>
             <td>{{ item.task_owner }}</td>
-            <td>{{ item.short_devices |default:"-"  }}</td>
-            <td>{{ item.start_date |date:"Y-m-d" |default:"-"  }}</td>
-            <td>{{ item.due_date |date:"Y-m-d" |default:"-" }}</td>
-            <td>{{ item.short_testers |default:"-" }}</td>
-            <td>{{ item.business_days |default:"-" }}</td>
-            <td><span class="badge-status {% if item.progress == "In progress" %}status-inprogress{% endif %} {% if item.progress == "COMPLETE" %}status-complete{% endif %} {% if item.progress == "Wait" %}status-wait{% endif %} {% if item.progress == "Hold" %}status-hold{% endif %}">{{ item.progress }}</span></td>
+            <td>{{ item.short_devices|default:"-" }}</td>
+            <td>{{ item.start_date|date:"Y-m-d"|default:"-" }}</td>
+            <td>{{ item.due_date|date:"Y-m-d"|default:"-" }}</td>
+            <td>{{ item.short_testers|default:"-" }}</td>
+            <td>{{ item.business_days|default:"-" }}</td>
+            <!-- 진행 상태별 색상 클래스 동적 적용 -->
+            <td>
+              <span class="badge-status
+                {% if item.progress == 'In progress' %}status-inprogress
+                {% elif item.progress == 'COMPLETE'  %}status-complete
+                {% elif item.progress == 'Wait'      %}status-wait
+                {% elif item.progress == 'Hold'      %}status-hold
+                {% endif %}">
+                {{ item.progress }}
+              </span>
+            </td>
           </tr>
-          {% empty %}<tr><td colspan="9" class="text-center">등록된 데이터가 없습니다.</td></tr>{% endfor %}
+          {% empty %}
+          <!-- 데이터 없을 때 안내 행 -->
+          <tr><td colspan="9" class="text-center">등록된 데이터가 없습니다.</td></tr>
+          {% endfor %}
         </tbody>
       </table>
 
+      <!-- ——— 페이지네이션 ——— -->
       <div class="pagination-container">
         {% if page_obj.has_previous %}
-          <a
-            href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.progress %}&progress={{ request.GET.progress }}{% endif %}{% if request.GET.owner %}&owner={{ request.GET.owner }}{% endif %}"
-            class="btn btn-outline-primary btn-sm me-2">
-            이전
-          </a>
+          <!-- 이전 페이지: 현재 필터 파라미터 유지 -->
+          <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.progress %}&progress={{ request.GET.progress }}{% endif %}{% if request.GET.owner %}&owner={{ request.GET.owner }}{% endif %}"
+             class="btn btn-outline-primary btn-sm me-2">이전</a>
         {% endif %}
 
+        <!-- 현재 페이지 / 전체 페이지 표시 -->
         <span class="btn btn-secondary btn-sm disabled">
           페이지 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
         </span>
 
         {% if page_obj.has_next %}
-          <a
-            href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.progress %}&progress={{ request.GET.progress }}{% endif %}{% if request.GET.owner %}&owner={{ request.GET.owner }}{% endif %}"
-            class="btn btn-outline-primary btn-sm ms-2">
-            다음
-          </a>
+          <!-- 다음 페이지: 현재 필터 파라미터 유지 -->
+          <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.progress %}&progress={{ request.GET.progress }}{% endif %}{% if request.GET.owner %}&owner={{ request.GET.owner }}{% endif %}"
+             class="btn btn-outline-primary btn-sm ms-2">다음</a>
         {% endif %}
       </div>
 
-
-      <!-- 데이터 맵 정의 -->
-    <script>
+      <!-- ——— 전역 wbsData 딕셔너리 (모달 데이터 바인딩용) ——— -->
+      <script>
         const wbsData = {
           {% for item in page_obj %}
           "{{ item.no }}": {
-            no: "{{ item.no }}",
-            title: "{{ item.task_title|escapejs }}",
-            content: "{{ item.task_content|escapejs }}",
-            owner: "{{ item.task_owner|escapejs }}",
-            device: "{{ item.device|escapejs }}",
-            start: "{{ item.start_date|date:'Y-m-d' }}",
-            due:   "{{ item.due_date|date:'Y-m-d' }}",
-            tester: "{{ item.tester|escapejs }}",
+            no:       "{{ item.no }}",
+            title:    "{{ item.task_title|escapejs }}",
+            content:  "{{ item.task_content|escapejs }}",
+            owner:    "{{ item.task_owner|escapejs }}",
+            device:   "{{ item.device|escapejs }}",
+            start:    "{{ item.start_date|date:'Y-m-d' }}",
+            due:      "{{ item.due_date|date:'Y-m-d' }}",
+            tester:   "{{ item.tester|escapejs }}",
             duration: "{{ item.business_days }}",
             progress: "{{ item.progress|escapejs }}",
             comment:  "{{ item.comment|escapejs }}"
           }{% if not forloop.last %},{% endif %}
           {% endfor %}
         };
-              // CSRF token helper
-      function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-          const cookies = document.cookie.split(';');
-          for (let cookie of cookies) {
-            const [key, val] = cookie.trim().split('=');
-            if (key === name) { cookieValue = decodeURIComponent(val); break; }
-          }
-        }
-        return cookieValue;
-      }
-    </script>
 
-      <!-- 상세 모달 -->
+        // CSRF 토큰 쿠키 추출 유틸 함수
+        function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+              const [key, val] = cookie.trim().split('=');
+              if (key === name) { cookieValue = decodeURIComponent(val); break; }
+            }
+          }
+          return cookieValue;
+        }
+      </script>
+
+      <!-- ===================== 상세 / 수정 모달 ===================== -->
       <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
           <div class="modal-content">
@@ -251,23 +259,25 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <!-- ▶ Read 모드 -->
+
+              <!-- Read 모드: 항목 상세 정보 표시 -->
               <div id="read-mode">
                 <table class="table table-borderless text-start">
-                  <tr><th>No.</th><td id="detail-no"></td></tr>
-                  <tr><th>Title</th><td id="detail-title"></td></tr>
-                  <tr><th>Task Content</th><td id="detail-content" style="white-space:pre-wrap;"></td></tr>
-                  <tr><th>Owner</th><td id="detail-owner"></td></tr>
-                  <tr><th>Device</th><td id="detail-device"></td></tr>
-                  <tr><th>Start Date</th><td id="detail-start"></td></tr>
-                  <tr><th>Due Date</th><td id="detail-due"></td></tr>
-                  <tr><th>Tester</th><td id="detail-tester"></td></tr>
-                  <tr><th>Duration</th><td id="detail-duration"></td></tr>
-                  <tr><th>Progress</th><td id="detail-progress"></td></tr>
-                  <tr><th>Comment</th><td id="detail-comment"></td></tr>
+                  <tr><th>No.</th>          <td id="detail-no"></td></tr>
+                  <tr><th>Title</th>        <td id="detail-title"></td></tr>
+                  <tr><th>Task Content</th> <td id="detail-content" style="white-space:pre-wrap;"></td></tr>
+                  <tr><th>Owner</th>        <td id="detail-owner"></td></tr>
+                  <tr><th>Device</th>       <td id="detail-device"></td></tr>
+                  <tr><th>Start Date</th>   <td id="detail-start"></td></tr>
+                  <tr><th>Due Date</th>     <td id="detail-due"></td></tr>
+                  <tr><th>Tester</th>       <td id="detail-tester"></td></tr>
+                  <tr><th>Duration</th>     <td id="detail-duration"></td></tr>
+                  <tr><th>Progress</th>     <td id="detail-progress"></td></tr>
+                  <tr><th>Comment</th>      <td id="detail-comment"></td></tr>
                 </table>
               </div>
-              <!-- ▶ Edit 모드 -->
+
+              <!-- Edit 모드: 항목 수정 폼 (수정 버튼 클릭 시 표시) -->
               <div id="edit-mode" style="display:none;">
                 <form id="modal-edit-form" method="post" data-url-template="{% url 'wbs_edit' 0 %}">
                   {% csrf_token %}
@@ -321,126 +331,110 @@
                   </div>
                 </form>
               </div>
-            </div>
-            <div class="modal-footer">
-              <button id="delete-btn" type="button" class="btn btn-danger btn-sm me-auto">삭제</button>
-              <button id="edit-toggle-btn" type="button" class="btn btn-primary btn-sm">수정</button>
-              <button id="save-btn" type="button" class="btn btn-success btn-sm" style="display:none;">저장</button>
-              <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">닫기</button>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- 입력 모달 -->
-      <div id="inputModal" style="display:none; position:fixed; inset:0; background-color:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:1050;">
-        <div style="background:white; width:600px; padding:20px; border-radius:8px;">
-          <h4>새 항목 추가</h4>
-          <div class="text-end mt-3">
-            <button class="btn btn-success btn-sm" onclick="addRow()">추가</button>
-            <button class="btn btn-secondary btn-sm" onclick="closeInputModal()">닫기</button>
+            </div>
+            <!-- 모달 푸터: 삭제 / 수정 / 저장 / 닫기 -->
+            <div class="modal-footer">
+              <button id="delete-btn"      type="button" class="btn btn-danger    btn-sm me-auto">삭제</button>
+              <button id="edit-toggle-btn" type="button" class="btn btn-primary   btn-sm">수정</button>
+              <button id="save-btn"        type="button" class="btn btn-success   btn-sm" style="display:none;">저장</button>
+              <button                      type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">닫기</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">새 WBS 항목 추가</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <form id="modal-add-form" data-url-template="/board/api/create/">
-              {% csrf_token %}
-              <div class="mb-3">
-                <label class="form-label">Title</label>
-                <input type="text" name="task_title" class="form-control">
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Content</label>
-                <textarea name="task_content" class="form-control" rows="4"></textarea>
-              </div>
-              <!-- 아래 필드도 Edit 모달과 동일한 구조로 추가 -->
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Owner</label>
-                  <input type="text" name="task_owner" class="form-control">
+      <!-- ===================== // 상세 / 수정 모달 ===================== -->
+
+      <!-- ===================== 항목 추가 모달 ===================== -->
+      <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">새 WBS 항목 추가</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <!-- 새 항목 입력 폼 (fetch로 /board/api/create/ 에 POST) -->
+              <form id="modal-add-form" data-url-template="/board/api/create/">
+                {% csrf_token %}
+                <div class="mb-3">
+                  <label class="form-label">Title</label>
+                  <input type="text" name="task_title" class="form-control">
                 </div>
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Device</label>
-                  <input type="text" name="device" class="form-control" placeholder="쉼표(,)로 구분">
+                <div class="mb-3">
+                  <label class="form-label">Content</label>
+                  <textarea name="task_content" class="form-control" rows="4"></textarea>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Start Date</label>
-                  <input type="date" name="start_date" class="form-control">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Owner</label>
+                    <input type="text" name="task_owner" class="form-control">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Device</label>
+                    <input type="text" name="device" class="form-control" placeholder="쉼표(,)로 구분">
+                  </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Due Date</label>
-                  <input type="date" name="due_date" class="form-control">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Start Date</label>
+                    <input type="date" name="start_date" class="form-control">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Due Date</label>
+                    <input type="date" name="due_date" class="form-control">
+                  </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Tester</label>
-                  <input type="text" name="tester" class="form-control" placeholder="첫 2명만 보여집니다">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Tester</label>
+                    <input type="text" name="tester" class="form-control" placeholder="첫 2명만 보여집니다">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Progress</label>
+                    <select name="progress" class="form-select">
+                      <option>In progress</option>
+                      <option>COMPLETE</option>
+                      <option>Wait</option>
+                      <option>Hold</option>
+                    </select>
+                  </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Progress</label>
-                  <select name="progress" class="form-select">
-                    <option>In progress</option>
-                    <option>COMPLETE</option>
-                    <option>Wait</option>
-                    <option>Hold</option>
-                  </select>
+                <div class="mb-3">
+                  <label class="form-label">Comment</label>
+                  <textarea name="comment" class="form-control" rows="2"></textarea>
                 </div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Comment</label>
-                <textarea name="comment" class="form-control" rows="2"></textarea>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button
-              id="add-save-btn"
-              type="button"
-              class="btn btn-success btn-sm">
-              추가
-            </button>
-            <button
-              type="button"
-              class="btn btn-secondary btn-sm"
-              data-bs-dismiss="modal">
-              닫기
-            </button>
+              </form>
+            </div>
+            <!-- 추가 / 닫기 버튼 -->
+            <div class="modal-footer">
+              <button id="add-save-btn" type="button" class="btn btn-success   btn-sm">추가</button>
+              <button                   type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">닫기</button>
+            </div>
           </div>
         </div>
       </div>
+      <!-- ===================== // 항목 추가 모달 ===================== -->
+
     </div>
+    <!-- ===================== // 메인 콘텐츠 ===================== -->
+
   </div>
 
+  <!-- ——— 이벤트 핸들러 스크립트 (wbsData 선언 이후에 위치) ——— -->
   <script>
     // ——— 상세 모달 열릴 때 데이터 바인딩 ———
     const detailModal = document.getElementById('detailModal');
     detailModal.addEventListener('show.bs.modal', function(event) {
-
-        // 클릭한 요소의 data-no 속성으로 항목 번호 추출
         const no   = event.relatedTarget.getAttribute('data-no');
-        const data = wbsData[no] || {};  // 전역 wbsData에서 해당 항목 조회, 없으면 빈 객체
+        const data = wbsData[no] || {};
 
-        // ——— 삭제 버튼에 no 저장 ———
         document.getElementById('delete-btn').dataset.no = no;
 
-        // ——— Read 모드: 텍스트로 데이터 표시 ———
         document.getElementById('detail-no').textContent       = data.no;
         document.getElementById('detail-title').textContent    = data.title;
-        // 줄바꿈(\n)을 <br>로 변환하여 HTML로 삽입
         document.getElementById('detail-content').innerHTML    = (data.content || '').replace(/\r?\n/g, '<br>');
         document.getElementById('detail-owner').textContent    = data.owner;
-        // 줄바꿈 기준으로 기기 목록 분리 후 쉼표로 연결
         document.getElementById('detail-device').textContent   = (data.device || '')
             .split(/\r?\n/).map(s => s.trim()).filter(s => s).join(', ');
         document.getElementById('detail-start').textContent    = data.start;
@@ -450,36 +444,30 @@
         document.getElementById('detail-progress').textContent = data.progress;
         document.getElementById('detail-comment').textContent  = data.comment;
 
-        // ——— Edit 모드: 폼 필드에 기존 데이터 세팅 ———
         document.getElementById('form-no').value      = no;
         document.getElementById('form-title').value   = data.title;
         document.getElementById('form-content').value = data.content;
         document.getElementById('form-owner').value   = data.owner;
-        // 줄바꿈 기준 분리 → 공백 제거 → 빈 문자열 제거 → 쉼표로 연결
         document.getElementById('form-device').value  = (data.device || '')
-            .split(/\r?\n/)
-            .map(s => s.trim())
-            .filter(s => s)
-            .join(', ');
+            .split(/\r?\n/).map(s => s.trim()).filter(s => s).join(', ');
         document.getElementById('form-start').value    = data.start;
         document.getElementById('form-due').value      = data.due;
         document.getElementById('form-tester').value   = data.tester;
         document.getElementById('form-progress').value = data.progress;
         document.getElementById('form-comment').value  = data.comment;
 
-        // ——— 모달 초기 상태: Read 모드로 시작 ———
+        // Read 모드로 초기화
         document.getElementById('read-mode').style.display        = '';
         document.getElementById('edit-mode').style.display        = 'none';
         document.getElementById('edit-toggle-btn').style.display  = '';
         document.getElementById('save-btn').style.display         = 'none';
 
-        // ——— 폼 action URL에 항목 번호 반영 ———
-        // data-url-template의 '0' 자리를 실제 no로 치환
+        // 폼 action URL에 no 반영
         const form = document.getElementById('modal-edit-form');
         form.action = form.dataset.urlTemplate.replace('0', no);
     });
 
-    // ——— 편집 모드 전환 버튼 ———
+    // ——— 편집 모드 전환 ———
     document.getElementById('edit-toggle-btn').addEventListener('click', () => {
         document.getElementById('read-mode').style.display       = 'none';
         document.getElementById('edit-mode').style.display       = '';
@@ -496,17 +484,15 @@
     document.getElementById('add-save-btn').addEventListener('click', () => {
         const form = document.getElementById('modal-add-form');
         const url  = form.dataset.urlTemplate;
-        const fd   = new FormData(form);  // 폼 데이터 수집
-
+        const fd   = new FormData(form);
         fetch(url, {
             method: 'POST',
             body: fd,
-            headers: { 'X-CSRFToken': getCookie('csrftoken') }  // CSRF 토큰 헤더 포함
+            headers: { 'X-CSRFToken': getCookie('csrftoken') }
         })
         .then(res => res.json())
         .then(json => {
             if (json.status === 'success') {
-                // 추가 성공: 모달 닫고 목록 새로고침
                 bootstrap.Modal.getInstance(document.getElementById('addModal')).hide();
                 location.reload();
             } else {
@@ -515,23 +501,11 @@
         });
     });
 
-
-    // ——— CSRF 토큰 쿠키 추출 유틸 함수 ———
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        // 쿠키가 존재하면 값 반환, 없으면 undefined
-        if (parts.length === 2) return parts.pop().split(';').shift();
-    }
-
-    // ——— 삭제 버튼 클릭 이벤트 ———
+    // ——— 삭제 버튼 ———
     document.getElementById('delete-btn').addEventListener('click', function () {
         const no = this.dataset.no;
-        if (!no) return;  // no 값 없으면 중단
-
-        // 삭제 전 사용자 확인
+        if (!no) return;
         if (!confirm('정말 삭제하시겠습니까?')) return;
-
         fetch(`/board/api/delete/${no}/`, {
             method: 'POST',
             headers: { 'X-CSRFToken': getCookie('csrftoken') },
@@ -539,11 +513,8 @@
         .then(res => res.json())
         .then(json => {
             if (json.status === 'success') {
-                // 삭제 성공: 모달 닫고 목록 새로고침
                 bootstrap.Modal.getInstance(document.getElementById('detailModal')).hide();
                 location.reload();
-                // DOM에서 직접 행만 제거하려면:
-                // document.querySelector(`a[data-no="${no}"]`)?.closest('tr')?.remove();
             } else {
                 alert('삭제 실패: ' + (json.message || '알 수 없는 오류'));
             }
