@@ -47,7 +47,7 @@ def load_wbs_from_csv(file_or_buffer):
         WBSItem.objects.create(
             no           = no_val,
             task_title   = row.get('task_title', ''),
-            task_content = row.get('task_content', ''),  # ★ 여기 저장
+            task_content = row.get('task_content', ''),  # 여기 저장
             task_owner   = row.get('task_owner', ''),
             device       = row.get('device', ''),
             start_date   = start_val,

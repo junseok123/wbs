@@ -423,114 +423,133 @@
   </div>
 
   <script>
+    // ——— 상세 모달 열릴 때 데이터 바인딩 ———
     const detailModal = document.getElementById('detailModal');
     detailModal.addEventListener('show.bs.modal', function(event) {
-      const no = event.relatedTarget.getAttribute('data-no');
-      const data = wbsData[no] || {};
-      // Read 모드 채우기
-      document.getElementById('delete-btn').dataset.no = no;
-      document.getElementById('detail-no').textContent      = data.no;
-      document.getElementById('detail-title').textContent   = data.title;
-      document.getElementById('detail-content').innerHTML   = (data.content||'').replace(/\r?\n/g,'<br>');
-      document.getElementById('detail-owner').textContent   = data.owner;
-      document.getElementById('detail-device').textContent  = (data.device||'')
-        .split(/\r?\n/) .map(s=>s.trim()).filter(s=>s).join(', ');
-      document.getElementById('detail-start').textContent   = data.start;
-      document.getElementById('detail-due').textContent     = data.due;
-      document.getElementById('detail-tester').textContent  = data.tester;
-      document.getElementById('detail-duration').textContent= data.duration;
-      document.getElementById('detail-progress').textContent= data.progress;
-      document.getElementById('detail-comment').textContent = data.comment;
-      // Edit 폼 세팅
-      document.getElementById('form-no').value      = no;
-      document.getElementById('form-title').value   = data.title;
-      document.getElementById('form-content').value = data.content;
-      document.getElementById('form-owner').value   = data.owner;
-      document.getElementById('form-device').value =
-        (data.device || '')
-          .split(/\r?\n/)        // 원본에 포함된 CR/LF 기준 분리
-          .map(s => s.trim())    // 앞뒤 공백 제거
-          .filter(s => s)        // 빈 문자열 제거
-          .join(', ');
-      document.getElementById('form-start').value   = data.start;
-      document.getElementById('form-due').value     = data.due;
-      document.getElementById('form-tester').value  = data.tester;
-      document.getElementById('form-progress').value= data.progress;
-      document.getElementById('form-comment').value = data.comment;
-      // 모드 초기화
-      document.getElementById('read-mode').style.display   = '';
-      document.getElementById('edit-mode').style.display   = 'none';
-      document.getElementById('edit-toggle-btn').style.display = '';
-      document.getElementById('save-btn').style.display        = 'none';
-      // 폼 action URL
-      const form = document.getElementById('modal-edit-form');
-      form.action = form.dataset.urlTemplate.replace('0', no);
+
+        // 클릭한 요소의 data-no 속성으로 항목 번호 추출
+        const no   = event.relatedTarget.getAttribute('data-no');
+        const data = wbsData[no] || {};  // 전역 wbsData에서 해당 항목 조회, 없으면 빈 객체
+
+        // ——— 삭제 버튼에 no 저장 ———
+        document.getElementById('delete-btn').dataset.no = no;
+
+        // ——— Read 모드: 텍스트로 데이터 표시 ———
+        document.getElementById('detail-no').textContent       = data.no;
+        document.getElementById('detail-title').textContent    = data.title;
+        // 줄바꿈(\n)을 <br>로 변환하여 HTML로 삽입
+        document.getElementById('detail-content').innerHTML    = (data.content || '').replace(/\r?\n/g, '<br>');
+        document.getElementById('detail-owner').textContent    = data.owner;
+        // 줄바꿈 기준으로 기기 목록 분리 후 쉼표로 연결
+        document.getElementById('detail-device').textContent   = (data.device || '')
+            .split(/\r?\n/).map(s => s.trim()).filter(s => s).join(', ');
+        document.getElementById('detail-start').textContent    = data.start;
+        document.getElementById('detail-due').textContent      = data.due;
+        document.getElementById('detail-tester').textContent   = data.tester;
+        document.getElementById('detail-duration').textContent = data.duration;
+        document.getElementById('detail-progress').textContent = data.progress;
+        document.getElementById('detail-comment').textContent  = data.comment;
+
+        // ——— Edit 모드: 폼 필드에 기존 데이터 세팅 ———
+        document.getElementById('form-no').value      = no;
+        document.getElementById('form-title').value   = data.title;
+        document.getElementById('form-content').value = data.content;
+        document.getElementById('form-owner').value   = data.owner;
+        // 줄바꿈 기준 분리 → 공백 제거 → 빈 문자열 제거 → 쉼표로 연결
+        document.getElementById('form-device').value  = (data.device || '')
+            .split(/\r?\n/)
+            .map(s => s.trim())
+            .filter(s => s)
+            .join(', ');
+        document.getElementById('form-start').value    = data.start;
+        document.getElementById('form-due').value      = data.due;
+        document.getElementById('form-tester').value   = data.tester;
+        document.getElementById('form-progress').value = data.progress;
+        document.getElementById('form-comment').value  = data.comment;
+
+        // ——— 모달 초기 상태: Read 모드로 시작 ———
+        document.getElementById('read-mode').style.display        = '';
+        document.getElementById('edit-mode').style.display        = 'none';
+        document.getElementById('edit-toggle-btn').style.display  = '';
+        document.getElementById('save-btn').style.display         = 'none';
+
+        // ——— 폼 action URL에 항목 번호 반영 ———
+        // data-url-template의 '0' 자리를 실제 no로 치환
+        const form = document.getElementById('modal-edit-form');
+        form.action = form.dataset.urlTemplate.replace('0', no);
     });
+
+    // ——— 편집 모드 전환 버튼 ———
     document.getElementById('edit-toggle-btn').addEventListener('click', () => {
-      document.getElementById('read-mode').style.display = 'none';
-      document.getElementById('edit-mode').style.display = '';
-      document.getElementById('edit-toggle-btn').style.display = 'none';
-      document.getElementById('save-btn').style.display        = '';
+        document.getElementById('read-mode').style.display       = 'none';
+        document.getElementById('edit-mode').style.display       = '';
+        document.getElementById('edit-toggle-btn').style.display = 'none';
+        document.getElementById('save-btn').style.display        = '';
     });
+
+    // ——— 저장 버튼: 편집 폼 제출 ———
     document.getElementById('save-btn').addEventListener('click', () => {
-      document.getElementById('modal-edit-form').submit();
+        document.getElementById('modal-edit-form').submit();
     });
-        // “추가” 버튼 클릭 시
+
+    // ——— 추가 모달 저장 버튼 ———
     document.getElementById('add-save-btn').addEventListener('click', () => {
-      const form = document.getElementById('modal-add-form');
-      const url  = form.dataset.urlTemplate;
-      const fd   = new FormData(form);
+        const form = document.getElementById('modal-add-form');
+        const url  = form.dataset.urlTemplate;
+        const fd   = new FormData(form);  // 폼 데이터 수집
 
-      fetch(url, {
-        method: 'POST',
-        body: fd,
-        headers: { 'X-CSRFToken': getCookie('csrftoken') }
-      })
-      .then(res => res.json())
-      .then(json => {
-        if (json.status === 'success') {
-          // 모달 닫고 새로고침
-          bootstrap.Modal.getInstance(document.getElementById('addModal')).hide();
-          location.reload();
-        } else {
-          alert('추가 실패: ' + JSON.stringify(json.errors || json));
-        }
-      });
+        fetch(url, {
+            method: 'POST',
+            body: fd,
+            headers: { 'X-CSRFToken': getCookie('csrftoken') }  // CSRF 토큰 헤더 포함
+        })
+        .then(res => res.json())
+        .then(json => {
+            if (json.status === 'success') {
+                // 추가 성공: 모달 닫고 목록 새로고침
+                bootstrap.Modal.getInstance(document.getElementById('addModal')).hide();
+                location.reload();
+            } else {
+                alert('추가 실패: ' + JSON.stringify(json.errors || json));
+            }
+        });
     });
-    
 
-  </script>
-  <script>
-  // 없으면 추가
-  function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-  }
 
-  document.getElementById('delete-btn').addEventListener('click', function () {
-    const no = this.dataset.no;
-    if (!no) return;
-    if (!confirm('정말 삭제하시겠습니까?')) return;
+    // ——— CSRF 토큰 쿠키 추출 유틸 함수 ———
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        // 쿠키가 존재하면 값 반환, 없으면 undefined
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
 
-    fetch(`/board/api/delete/${no}/`, {
-      method: 'POST',
-      headers: { 'X-CSRFToken': getCookie('csrftoken') },
-    })
-    .then(res => res.json())
-    .then(json => {
-      if (json.status === 'success') {
-        // 모달 닫고 새로고침(간단/안전)
-        bootstrap.Modal.getInstance(document.getElementById('detailModal')).hide();
-        location.reload();
-        // 또는 DOM만 지우고 싶으면:
-        // document.querySelector(`a[data-no="${no}"]`)?.closest('tr')?.remove();
-      } else {
-        alert('삭제 실패: ' + (json.message || '알 수 없는 오류'));
-      }
-    })
-    .catch(err => alert('삭제 중 오류가 발생했습니다: ' + err));
-  });
+    // ——— 삭제 버튼 클릭 이벤트 ———
+    document.getElementById('delete-btn').addEventListener('click', function () {
+        const no = this.dataset.no;
+        if (!no) return;  // no 값 없으면 중단
+
+        // 삭제 전 사용자 확인
+        if (!confirm('정말 삭제하시겠습니까?')) return;
+
+        fetch(`/board/api/delete/${no}/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+        })
+        .then(res => res.json())
+        .then(json => {
+            if (json.status === 'success') {
+                // 삭제 성공: 모달 닫고 목록 새로고침
+                bootstrap.Modal.getInstance(document.getElementById('detailModal')).hide();
+                location.reload();
+                // DOM에서 직접 행만 제거하려면:
+                // document.querySelector(`a[data-no="${no}"]`)?.closest('tr')?.remove();
+            } else {
+                alert('삭제 실패: ' + (json.message || '알 수 없는 오류'));
+            }
+        })
+        .catch(err => alert('삭제 중 오류가 발생했습니다: ' + err));
+    });
   </script>
 </body>
 </html>

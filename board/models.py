@@ -43,8 +43,11 @@ class WBSItem(models.Model):
         return ', '.join(clean[:2])
     @property
     def short_testers(self):
+        # tester 값을 문자열로 변환 후 공백 기준으로 분리
         parts = str(self.tester).split()
+        # 빈 문자열과 'nan' 값 제거 후 앞뒤 공백 정리
         clean = [p.strip() for p in parts if p.strip() and p.lower() != 'nan']
+        # 최대 2개 항목만 쉼표로 연결하여 반환
         return ', '.join(clean[:2])
 
 

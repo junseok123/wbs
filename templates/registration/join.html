@@ -136,53 +136,61 @@
 
 <script>
 $(document).ready(function () {
-    // 변수 선언
-    var checkId = document.getElementById("inputId");
-    var checkPW = document.getElementById("inputPassword");
-    var checkPWCK = document.getElementById("inputPasswordCk");
-    var checkName = document.getElementById("inputName");
+
+    // ——— DOM 요소 참조 ———
+    var checkId     = document.getElementById("inputId");
+    var checkPW     = document.getElementById("inputPassword");
+    var checkPWCK   = document.getElementById("inputPasswordCk");
+    var checkName   = document.getElementById("inputName");
     var checkNumber = document.getElementById("inputNumber");
 
-    let id_ok = "no";
-    let pw_ok = "no";
-    let pwck_ok = "no";
-    let name_ok = "no";
-    let num_ok = "no";
-    let idck_ok = "no";
+    // ——— 각 필드 유효성 상태 플래그 ("ok" / "no") ———
+    let id_ok   = "no";  // 아이디 형식
+    let pw_ok   = "no";  // 비밀번호 형식
+    let pwck_ok = "no";  // 비밀번호 확인 일치
+    let name_ok = "no";  // 이름 형식
+    let num_ok  = "no";  // 사원번호 입력 여부
+    let idck_ok = "no";  // 아이디 중복검사 통과 여부
 
-    // 실시간 입력 중 유효성 상태 리셋
+    // ——— 입력 중 유효성 스타일 초기화 ———
+    // 사용자가 필드를 수정하면 is-valid / is-invalid 클래스를 제거
     window.inputDataCheck = function (id) {
         if (id) {
             document.getElementById(id).classList.remove("is-invalid");
             document.getElementById(id).classList.remove("is-valid");
+            // 아이디 필드 수정 시 중복검사 결과도 초기화
             if (document.getElementById(id) === checkId) {
                 idck_ok = "no";
             }
         }
     };
 
-    // 아이디 중복 검사
+    // ——— 아이디 중복 검사 ———
     window.id_check = function () {
+        // 아이디 미입력 시 에러 표시
         if (checkId.value == "") {
             document.getElementById("validId").innerText = "아이디를 입력해주세요.";
             checkId.className += " is-invalid";
         } else {
             idck_ok = "no";
-            idValid();
+            idValid(); // 형식 검사 먼저 수행
         }
+        // 형식 검사 통과 시에만 서버 중복 확인 Ajax 요청
         if (id_ok == "ok") {
             var usr_id = $("#inputId").val();
             $.ajax({
                 url: "/join/do_duplicate_check",
-                data: { username: usr_id }, // 중요: username으로 보내야 맞음!
+                data: { username: usr_id },
                 datatype: "json",
                 success: function (data) {
                     if (data["duplicate"] == "true") {
+                        // 중복 아이디: 에러 표시
                         document.getElementById("validId").innerText = "사용할 수 없는 아이디입니다.";
                         checkId.classList.remove("is-valid");
                         checkId.className += " is-invalid";
                         idck_ok = "no";
                     } else {
+                        // 사용 가능한 아이디: 성공 표시
                         checkId.className += " is-valid";
                         idck_ok = "ok";
                     }
@@ -193,7 +201,8 @@ $(document).ready(function () {
         }
     };
 
-    // 아이디 유효성 검사
+    // ——— 아이디 형식 유효성 검사 ———
+    // 조건: 6~16자, 영문 또는 영문+숫자 조합
     window.idValid = function () {
         var regex = /^[A-Za-z0-9+]{6,16}$/;
         if (checkId.value.length < 6 || checkId.value.length > 16) {
@@ -209,7 +218,8 @@ $(document).ready(function () {
         }
     };
 
-    // 비밀번호 유효성 검사
+    // ——— 비밀번호 형식 유효성 검사 ———
+    // 조건: 8자 이상, 영문 + 숫자 + 특수문자 포함
     window.passwordValid = function () {
         var regex = /^(?=.*[a-zA-Z])(?=.*[~?!@#$%^&*_-])(?=.*[0-9]).{8,}$/;
         if (checkPW.value.length < 8) {
@@ -225,7 +235,7 @@ $(document).ready(function () {
         }
     };
 
-    // 비밀번호 확인 검사
+    // ——— 비밀번호 확인 일치 검사 ———
     window.passwordCkValid = function () {
         if (checkPW.value != checkPWCK.value) {
             document.getElementById("validPWCK").innerText = "동일한 비밀번호를 입력해주세요.";
@@ -236,7 +246,8 @@ $(document).ready(function () {
         }
     };
 
-    // 이름 유효성 검사
+    // ——— 이름 유효성 검사 ———
+    // 조건: 한글 2~5자
     window.nameValid = function () {
         var regex = /^[가-힣]{2,5}$/;
         if (!regex.test(checkName.value)) {
@@ -248,71 +259,78 @@ $(document).ready(function () {
         }
     };
 
-    // 최종 유효성 검사
+    // ——— 폼 제출 전 전체 유효성 최종 검사 ———
     window.checkValid = function () {
+        // 아이디 중복검사 미실시 확인
         if (idck_ok == "no") {
             document.getElementById("validId").innerText = "아이디 중복검사를 해주세요.";
             checkId.className += " is-invalid";
         }
+        // 비밀번호 미입력 또는 형식 검사
         if (checkPW.value == "") {
             checkPW.className += " is-invalid";
             pw_ok = "no";
         } else {
             passwordValid();
         }
+        // 비밀번호 확인 미입력 또는 일치 검사
         if (checkPWCK.value == "") {
             checkPWCK.className += " is-invalid";
             pwck_ok = "no";
         } else {
             passwordCkValid();
         }
+        // 이름 미입력 또는 형식 검사
         if (checkName.value == "") {
             checkName.className += " is-invalid";
             name_ok = "no";
         } else {
             nameValid();
         }
+        // 사원번호 미입력 확인
         if (checkNumber.value == "") {
             checkNumber.className += " is-invalid";
             num_ok = "no";
         } else {
             num_ok = "ok";
         }
-        // 모든 OK일 때만 true
+        // 모든 플래그가 "ok"일 때만 true 반환
         if (
-            id_ok == "ok" &&
+            id_ok   == "ok" &&
             idck_ok == "ok" &&
-            pw_ok == "ok" &&
+            pw_ok   == "ok" &&
             pwck_ok == "ok" &&
             name_ok == "ok" &&
-            num_ok == "ok"
+            num_ok  == "ok"
         ) {
             return true;
         }
         return false;
     };
 
-    // 폼 submit 이벤트 단 한 번만 바인딩!
+    // ——— 폼 submit 이벤트 처리 ———
     $('#myForm').submit(function(event) {
-        event.preventDefault();
+        event.preventDefault(); // 기본 submit 동작 차단
+
         if (checkValid()) {
-            var formData = $(this).serialize();
+            var formData = $(this).serialize(); // 폼 데이터 직렬화
             $.ajax({
-                url: '/join/', // 이 부분 반드시 명확하게!
+                url: '/join/',
                 type: 'POST',
                 data: formData,
                 dataType: 'json',
                 success: function(response) {
                     if (response.message === 'Registration success') {
                         alert('회원가입이 완료되었습니다.');
-                        window.location.href = '/';
+                        window.location.href = '/'; // 가입 완료 후 메인으로 이동
                     } else if (response.message === 'not_allowed') {
-                        alert('등록된 사원이 아닙니다.');    
+                        alert('등록된 사원이 아닙니다.');
                     } else {
                         alert('회원가입에 실패했습니다. 다시 시도해주세요.');
                     }
                 },
                 error: function(xhr, status, error) {
+                    // 요청 실패 시 콘솔에 상세 로그 출력
                     alert('요청실패');
                     console.log('Error:', error);
                     console.log('Status:', status);
