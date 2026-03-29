@@ -1,4 +1,4 @@
-# WBS 프로젝트 관리 시스템
+WBS 프로젝트 관리 시스템
 
 Django 기반의 사내 WBS(Work Breakdown Structure) 항목 관리 웹 애플리케이션입니다.  
 사원번호 인증 기반 회원가입, CSV 업로드, 항목 CRUD, 한국 공휴일 반영 영업일 계산 기능을 제공합니다.
